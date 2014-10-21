@@ -4,6 +4,7 @@ The Tornado server used to receive operation requests and deliver results to the
 """
 
 from sys import stderr
+from transaction import Transaction
 
 """
 Check to ensure Tornado is installed
@@ -17,8 +18,11 @@ except ImportError:
 
 class MainHandler(tornado.web.RequestHandler):
 	def get(self):
-		#do things here
-		self.write("useful output")
+		transaction = Transaction()
+		if transaction.parse_json(self.request.body):
+			self.write("useful output")
+		else:
+			self.write("Not a JSON file")
 
 	
 if __name__ == "__main__":
