@@ -1,6 +1,7 @@
 import unittest
 import sys
-sys.path.insert(0, '../src')
+sys.path.append('../src')
+sys.path.append('../src/ops')
 
 from transaction import transaction
 

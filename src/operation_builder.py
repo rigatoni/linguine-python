@@ -1,3 +1,6 @@
+import sys
+sys.path.append('./ops')
+
 from no_op import no_op
 
 def get_operation_handler(operation):
