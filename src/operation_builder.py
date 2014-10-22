@@ -1,3 +1,5 @@
+from no_op import no_op
+
 def get_operation_handler(operation):
 	if operation in globals():
 		constructor = globals()[operation]

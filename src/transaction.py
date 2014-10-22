@@ -1,7 +1,7 @@
 import json
 import operation_builder
 
-class Transaction:
+class transaction:
 
 	def __init__(self):
 		self.transactionID = -1
@@ -17,19 +17,25 @@ class Transaction:
 			self.operation = input_data['operation']
 			self.library = input_data['library']
 			self.data = input_data['data']
+
+			#for testing purposes until MongoDB is integrated
+			self.data = "The quick brown fox jumps over the lazy dog."
+			return True
 		except TypeError:
 			return False
 
 	def run(self):
 		if self.operation == None:
+			print("no")
 			return False
 		try:
 			op_handler = operation_builder.get_operation_handler(self.operation)
 			self.results = op_handler.run(self.data)
-			return True
+			return self.results
 		except RuntimeError:
+			print("couldn't build")
 			return False
 		
 	def get_json_response(self):
-		response = {'transactionID':self.transactionID, 'operation':self.operation, 'library':self.library, 'results':self.results}
+		response = {'transactionID':self.transactionID, 'library':self.library, 'operation':self.operation, 'results':self.results}
 		return json.JSONEncoder().encode(response)

@@ -20,7 +20,10 @@ class MainHandler(tornado.web.RequestHandler):
 	def get(self):
 		transaction = Transaction()
 		if transaction.parse_json(self.request.body):
-			self.write("useful output")
+			if transaction.run():
+				self.write(transaction.get_json_response())
+			else:
+				self.write("Error processing transaction")
 		else:
 			self.write("Not a JSON file")
 
