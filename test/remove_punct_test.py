@@ -5,7 +5,7 @@ sys.path.append('../src/ops')
 
 from remove_punct import remove_punct
 
-class tfidf_test(unittest.TestCase):
+class remove_punct_test(unittest.TestCase):
 
 	def setUp(self):
 		self.op = remove_punct()
