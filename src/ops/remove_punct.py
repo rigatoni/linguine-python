@@ -8,11 +8,3 @@ class remove_punct:
     def run(self, data):
         tokenizer = RegexpTokenizer(r'((?<=[^\w\s])\w(?=[^\w\s])|(\W))+', gaps=True)
         return " ".join(tokenizer.tokenize(data))
-
-"""
-Test code follows below: to be added to unit test suite.     
-
-s = '''He said,"that's it." *u* Hello, World. O'Rourke is rockin'.'''
-a = remove_punct()
-print(a.run(s))
-"""
