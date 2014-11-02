@@ -10,27 +10,27 @@ from transaction import Transaction
 Check to ensure Tornado is installed
 """
 try:
-	import tornado.ioloop
-	import tornado.web
+    import tornado.ioloop
+    import tornado.web
 except ImportError:
-	sys.stderr.write("Tornado not found.")
+    sys.stderr.write("Tornado not found.")
 
 
 class MainHandler(tornado.web.RequestHandler):
-	def get(self):
-		transaction = Transaction()
-		if transaction.parse_json(self.request.body):
-			if transaction.run():
-				self.write(transaction.get_json_response())
-			else:
-				self.write("Error processing transaction")
-		else:
-			self.write("Not a JSON file")
+    def get(self):
+        transaction = Transaction()
+        if transaction.parse_json(self.request.body):
+            if transaction.run():
+                self.write(transaction.get_json_response())
+            else:
+                self.write("Error processing transaction")
+        else:
+            self.write("Not a JSON file")
 
-	
+
 if __name__ == "__main__":
-	application = tornado.web.Application([ 
-		(r"/", MainHandler),
-		])
-	application.listen(5555)
-	tornado.ioloop.IOLoop.instance().start()
+    application = tornado.web.Application([
+        (r"/", MainHandler),
+        ])
+    application.listen(5555)
+    tornado.ioloop.IOLoop.instance().start()

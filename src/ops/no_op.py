@@ -3,5 +3,5 @@
 
 class no_op:
 
-	def run(self, data):
-		return data
+    def run(self, data):
+        return data
