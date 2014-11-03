@@ -4,4 +4,4 @@
 class no_op:
 
 	def run(self, data):
-		return data
+		return data[0]

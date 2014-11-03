@@ -26,6 +26,7 @@ class transaction:
 			return False
 
 		try:
+			#connects to localhost:27017
 			corpora = MongoClient().linguine.corpora
 			for dataID in dataIDs:
 				self.data.append(corpora.find_one({"_id" : ObjectId(dataID)})['text'])
@@ -41,7 +42,7 @@ class transaction:
 		try:
 			op_handler = operation_builder.get_operation_handler(self.operation)
 			self.results = op_handler.run(self.data)
-			return self.results[0]
+			return self.results
 		except RuntimeError:
 			self.error = "Invalid operation requested"
 			return False
