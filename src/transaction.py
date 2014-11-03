@@ -1,5 +1,7 @@
 import json
 import operation_builder
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 class transaction:
 
@@ -16,10 +18,11 @@ class transaction:
 			self.transactionID = input_data['transactionID']
 			self.operation = input_data['operation']
 			self.library = input_data['library']
-			self.data = input_data['data']
+			
+			dataID = input_data['data']
+			corpora = MongoClient().linguine.corpora
+			self.data = corpora.find_one({"_id" : ObjectId(dataID)})['text']
 
-			#for testing purposes until MongoDB is integrated
-			self.data = "The quick brown fox jumps over the lazy dog."
 			return True
 		except TypeError:
 			return False
@@ -37,5 +40,7 @@ class transaction:
 			return False
 		
 	def get_json_response(self):
-		response = {'transactionID':self.transactionID, 'library':self.library, 'operation':self.operation, 'results':self.results}
+		resultsCollection = MongoClient().linguine.results
+		resultID = resultsCollection.insert(self.results)
+		response = {'transactionID':self.transactionID, 'library':self.library, 'operation':self.operation, 'results':str(resultID)}
 		return json.JSONEncoder().encode(response)
