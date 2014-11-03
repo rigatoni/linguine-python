@@ -9,7 +9,7 @@ class transaction:
 		self.transactionID = -1
 		self.library = None
 		self.operation = None
-		self.data = None
+		self.data = []
 		self.results = None
 		self.error = None
 
@@ -19,14 +19,16 @@ class transaction:
 			self.transactionID = input_data['transactionID']
 			self.operation = input_data['operation']
 			self.library = input_data['library']
-			dataID = input_data['data']
+			dataIDs = input_data['data']
+			#self.results = input_data['results']
 		except TypeError:
 			self.error = "Improperly formatted request"
 			return False
 
 		try:
 			corpora = MongoClient().linguine.corpora
-			self.data = corpora.find_one({"_id" : ObjectId(dataID)})['text']
+			for dataID in dataIDs:
+				self.data.append(corpora.find_one({"_id" : ObjectId(dataID)})['text'])
 			return True
 		except TypeError:
 			self.error = "Could not find requested data ID"
@@ -39,7 +41,7 @@ class transaction:
 		try:
 			op_handler = operation_builder.get_operation_handler(self.operation)
 			self.results = op_handler.run(self.data)
-			return self.results
+			return self.results[0]
 		except RuntimeError:
 			self.error = "Invalid operation requested"
 			return False
