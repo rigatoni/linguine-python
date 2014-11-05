@@ -11,12 +11,12 @@ from transaction import Transaction
 class transaction_test(unittest.TestCase):
 
     def setUp(self):
-        self.trans = transaction()
+        self.trans = Transaction()
         self.test_data = {}
     
     def test_parse_json(self):
         #set up test data
-        self.trans = transaction()
+        self.trans = Transaction()
         node_env = os.environ['NODE_ENV']
         db = 'linguine-' + node_env
         corpora = MongoClient()[db].corpus
@@ -31,8 +31,7 @@ class transaction_test(unittest.TestCase):
 
     def test_run(self):
         #set up test data
-        self.trans = transaction()
-        self.trans = transaction()
+        self.trans = Transaction()
         node_env = os.environ['NODE_ENV']
         db = 'linguine-' + node_env
         corpora = MongoClient()[db].corpus
