@@ -27,9 +27,9 @@ class MainHandler(tornado.web.RequestHandler):
 		else:
 			self.write("Not a JSON file")
 
-	
+
 if __name__ == "__main__":
-	application = tornado.web.Application([ 
+	application = tornado.web.Application([
 		(r"/", MainHandler),
 		])
 	application.listen(5555)
