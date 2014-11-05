@@ -3,8 +3,8 @@
 
 class no_op:
 
-	def run(self, data):
-		if len(data) > 0:
-			return data[0]
-		else:
-			return ""
+    def run(self, data):
+        if len(data) > 0:
+            return data[0]
+        else:
+            return ""
