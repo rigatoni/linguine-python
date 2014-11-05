@@ -1,5 +1,6 @@
 import json
 import operation_builder
+import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
@@ -9,9 +10,11 @@ class transaction:
 		self.transactionID = -1
 		self.library = None
 		self.operation = None
+		self.data_ids = []
 		self.data = []
 		self.results = None
 		self.error = None
+		self.db = None
 
 	def parse_json(self, json_data):
 		try:
@@ -19,17 +22,24 @@ class transaction:
 			self.transactionID = input_data['transactionID']
 			self.operation = input_data['operation']
 			self.library = input_data['library']
-			dataIDs = input_data['data']
+			self.data_ids = input_data['data']
 			#self.results = input_data['results']
 		except TypeError:
 			self.error = "Improperly formatted request"
 			return False
 
 		try:
-			#connects to localhost:27017
-			corpora = MongoClient().linguine.corpora
-			for dataID in dataIDs:
-				self.data.append(corpora.find_one({"_id" : ObjectId(dataID)})['text'])
+			#Look for Node environment to determine db name.
+			self.db = 'linguine-' + os.environ['NODE_ENV']
+		except KeyError:
+			#NODE_ENV not found, default to dev
+			self.db = 'linguine-dev'
+
+		try:
+			#connects to MongoDB on localhost:27017
+			corpora = MongoClient()[self.db].corpus
+			for dataID in self.data_ids:
+				self.data.append(corpora.find_one({"_id" : ObjectId(dataID)})['contents'])
 			return True
 		except TypeError:
 			self.error = "Could not find requested data ID"
@@ -48,8 +58,9 @@ class transaction:
 			return False
 		
 	def get_json_response(self):
-		resultsCollection = MongoClient().linguine.results
-		resultID = resultsCollection.insert(self.results)
+		analysis_collection = MongoClient()[self.db].analysis
+		analysis_doc = {'corpora_ids':self.data_ids, 'cleanup_ids':[], 'result':self.results}
+		resultID = analysis_collection.insert(analysis_doc)
 		response = {'transactionID':self.transactionID, 'library':self.library, 'operation':self.operation, 'results':str(resultID)}
 		if not self.error == None:
 			response['error'] = self.error

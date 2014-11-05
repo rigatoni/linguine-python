@@ -4,4 +4,7 @@
 class no_op:
 
 	def run(self, data):
-		return data[0]
+		if len(data) > 0:
+			return data[0]
+		else:
+			return ""
