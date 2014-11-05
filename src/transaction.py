@@ -32,8 +32,8 @@ class Transaction:
             #Look for Node environment to determine db name.
             self.db = 'linguine-' + os.environ['NODE_ENV']
         except KeyError:
-            #NODE_ENV not found, default to dev
-            self.db = 'linguine-dev'
+            #NODE_ENV not found, default to development
+            self.db = 'linguine-development'
 
         try:
             #connects to MongoDB on localhost:27017
@@ -56,7 +56,7 @@ class Transaction:
         except RuntimeError:
             self.error = "Invalid operation requested"
             return False
-        
+
     def get_json_response(self):
         analysis_collection = MongoClient()[self.db].analysis
         analysis_doc = {'corpora_ids':self.data_ids, 'cleanup_ids':[], 'result':self.results}
