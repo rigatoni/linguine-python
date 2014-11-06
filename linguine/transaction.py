@@ -1,12 +1,12 @@
 import json
-import operation_builder
+import linguine.operation_builder
 import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 class Transaction:
 
-    def __init__(self):
+    def __init__(self, env=None):
         self.transactionID = -1
         self.library = None
         self.operation = None
@@ -14,7 +14,14 @@ class Transaction:
         self.data = []
         self.results = None
         self.error = None
-        self.db = None
+        if env:
+            self.db = 'linguine-' + env
+        elif 'NODE_ENV' in os.environ:
+            #Look for Node environment to determine db name.
+            self.db = 'linguine-' + os.environ['NODE_ENV']
+        else:
+            #NODE_ENV not found, default to development
+            self.db = 'linguine-development'
 
     def parse_json(self, json_data):
         try:
@@ -29,16 +36,10 @@ class Transaction:
             return False
 
         try:
-            #Look for Node environment to determine db name.
-            self.db = 'linguine-' + os.environ['NODE_ENV']
-        except KeyError:
-            #NODE_ENV not found, default to development
-            self.db = 'linguine-development'
-
-        try:
             #connects to MongoDB on localhost:27017
             corpora = MongoClient()[self.db].corpus
             for dataID in self.data_ids:
+                value = corpora.find_one({})
                 self.data.append(corpora.find_one({"_id" : ObjectId(dataID)})['contents'])
             return True
         except TypeError:
@@ -50,7 +51,7 @@ class Transaction:
             self.error = "No operation indicated"
             return False
         try:
-            op_handler = operation_builder.get_operation_handler(self.operation)
+            op_handler = linguine.operation_builder.get_operation_handler(self.operation)
             self.results = op_handler.run(self.data)
             return self.results
         except RuntimeError:

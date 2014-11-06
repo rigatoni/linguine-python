@@ -4,7 +4,7 @@ The Tornado server used to receive operation requests and deliver results to the
 """
 
 from sys import stderr
-from transaction import Transaction
+from linguine.transaction import Transaction
 
 """
 Check to ensure Tornado is installed
