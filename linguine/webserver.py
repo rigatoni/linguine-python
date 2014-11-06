@@ -17,7 +17,7 @@ except ImportError:
 
 
 class MainHandler(tornado.web.RequestHandler):
-	def get(self):
+	def post(self):
 		transaction = Transaction()
 		if transaction.parse_json(self.request.body):
 			if transaction.run():

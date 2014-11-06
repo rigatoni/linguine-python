@@ -40,7 +40,7 @@ class Transaction:
             corpora = MongoClient()[self.db].corpus
             for dataID in self.data_ids:
                 value = corpora.find_one({})
-                self.data.append(corpora.find_one({"_id" : ObjectId(dataID)})['contents'])
+                self.data.append(corpora.find_one({"_id" : ObjectId(str(dataID))})['contents'])
             return True
         except TypeError:
             self.error = "Could not find requested data ID"
@@ -52,7 +52,7 @@ class Transaction:
             return False
         try:
             op_handler = linguine.operation_builder.get_operation_handler(self.operation)
-            self.results = op_handler.run(self.data)
+            self.results = op_handler.run(self)
             return self.results
         except RuntimeError:
             self.error = "Invalid operation requested"
