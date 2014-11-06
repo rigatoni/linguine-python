@@ -3,9 +3,8 @@
 Given a set of texts, calculates the TF-IDF for each word-text pair in the set.
 Returns: A list of tuples pairing corpus name to TFIDF list - each TFIDF list is
 a sorted list of tuples mapping TFIDF value to a string token.
-Given: Data containing a list of tuples, tuple element one being the corpus name/ID,
-element two being a list of all tokens in the corpus, i.e.
-[ ('1',['hello', 'world']), ('2',['how', 'now', 'brown', 'cow']), ('3',['and', 'how']) ]
+Given: Data containing a list of lists of all tokens in each corpus, i.e.
+[ ['hello', 'world'],['how', 'now', 'brown', 'cow'],['and', 'how'] ]
 """
 import math
 class tfidf:
@@ -20,7 +19,7 @@ class tfidf:
         result = []
         for doc in data:
             terms_in_doc = {}
-            for word in doc[1]:
+            for word in doc:
                 if word in terms_in_doc:
                     terms_in_doc[word] += 1
                 else:
@@ -31,23 +30,23 @@ class tfidf:
                     self.global_term_freq[word] += 1
                 else:
                     self.global_term_freq[word] = 1
-            self.global_terms_in_doc[doc[0]] = terms_in_doc
+            self.global_terms_in_doc[data.index(doc)] = terms_in_doc
         for doc in data:
             max_freq = 0
             doc_result = []
-            for (term, freq) in self.global_terms_in_doc[doc[0]].items():
+            for (term, freq) in self.global_terms_in_doc[data.index(doc)].items():
                 if freq > max_freq:
                     max_freq = freq
-            for (term, freq) in self.global_terms_in_doc[doc[0]].items():
+            for (term, freq) in self.global_terms_in_doc[data.index(doc)].items():
                 idf = math.log(float(1 + self.num_docs) / float(1 + self.global_term_freq[term]))
                 tfidf = float(freq) / float(max_freq) * float(idf)
                 doc_result.append((tfidf, term))
-            result.append((doc[0],sorted(doc_result, reverse=True)))
+            result.append((doc,sorted(doc_result, reverse=True)))
         return result
 
 """
 Test code, to be moved to unit tests
 """
-mylist = [ ('1',['hello', 'world']), ('2',['goodbye', 'world']) ]
+mylist = [ ['hello', 'world'],['goodbye', 'world'] ]
 a = tfidf()
 print(a.run(mylist))
