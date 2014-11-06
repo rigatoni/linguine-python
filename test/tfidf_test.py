@@ -10,9 +10,9 @@ class tfidf_test(unittest.TestCase):
 
     def test_run(self):
         self.op = tfidf()
-        self.test_data = [ ('1',['hello', 'world']), ('2',['goodbye', 'world']) ]
-        self.assertEqual(self.op.run(self.test_data), [('1', [(0.4054651081081644, 'hello'),\
-              (0.0, 'world')]), ('2', [(0.4054651081081644, 'goodbye'), (0.0, 'world')]) ])
+        self.test_data = [['hello', 'world'],['goodbye', 'world'] ]
+        self.assertEqual(self.op.run(self.test_data), [[(0.4054651081081644, 'hello'),\
+              (0.0, 'world')], [(0.4054651081081644, 'goodbye'), (0.0, 'world')] ])
 
 if __name__ == '__main__':
     unittest.main()
