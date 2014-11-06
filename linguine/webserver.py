@@ -4,7 +4,7 @@ The Tornado server used to receive operation requests and deliver results to the
 """
 
 from sys import stderr
-from transaction import Transaction
+from linguine.transaction import Transaction
 
 """
 Check to ensure Tornado is installed
@@ -27,9 +27,9 @@ class MainHandler(tornado.web.RequestHandler):
 		else:
 			self.write("Not a JSON file")
 
-	
+
 if __name__ == "__main__":
-	application = tornado.web.Application([ 
+	application = tornado.web.Application([
 		(r"/", MainHandler),
 		])
 	application.listen(5555)
