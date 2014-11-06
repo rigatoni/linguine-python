@@ -1,9 +1,7 @@
 import unittest
 import sys
-sys.path.append('../src')
-sys.path.append('../src/ops')
 
-from remove_punct import remove_punct
+from linguine.ops.remove_punct import remove_punct
 
 class remove_punct_test(unittest.TestCase):
 

@@ -1,9 +1,7 @@
 import unittest
 import sys
-sys.path.append('../src')
-sys.path.append('../src/ops')
 
-from tfidf import tfidf
+from linguine.ops.tfidf import tfidf
 
 class tfidf_test(unittest.TestCase):
 
