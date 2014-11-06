@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-from linguine.ops.remove_caps import remove_caps
+from linguine.ops.remove_caps import remove_caps_greedy, remove_caps_preserve_nnp
 
 class remove_punct_test(unittest.TestCase):
 
