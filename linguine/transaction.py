@@ -3,6 +3,8 @@ import linguine.operation_builder
 import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from bson.errors import InvalidId
+from linguine.transaction_exception import TransactionException
 
 class Transaction:
 
@@ -30,31 +32,29 @@ class Transaction:
             self.operation = input_data['operation']
             self.library = input_data['library']
             self.corpora_ids = input_data['corpora_ids']
+        except KeyError:
+            raise TransactionException('Missing property transaction_id, operation, library, or corpora_ids.')
+        except ValueError:
+            raise TransactionException('Could not parse JSON.')
         except TypeError:
-            self.error = "Improperly formatted request"
-            return False
-
+            raise TransactionException('Improperly formatted request.')
         try:
             #connects to MongoDB on localhost:27017
             corpora = MongoClient()[self.db].corpus
             for id in self.corpora_ids:
                 self.corpora.append(corpora.find_one({"_id" : ObjectId(str(id))}))
-            return True
-        except TypeError:
-            self.error = "Could not find requested data ID"
-            return False
+        except (TypeError, InvalidId):
+            raise TransactionException('Could not find corpus.')
 
     def run(self):
         if self.operation == None:
-            self.error = "No operation indicated"
-            return False
+            raise TransactionException('No operation indicated.')
         try:
             op_handler = linguine.operation_builder.get_operation_handler(self.operation)
             self.results = op_handler.run(self)
             return self.results
         except RuntimeError:
-            self.error = "Invalid operation requested"
-            return False
+            raise TransactionException('Invalid operation requested.')
 
     def get_json_response(self):
         analysis_collection = MongoClient()[self.db].analysis

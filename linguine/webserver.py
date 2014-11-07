@@ -2,9 +2,11 @@
 """
 The Tornado server used to receive operation requests and deliver results to the user.
 """
+import json
 
 from sys import stderr
 from linguine.transaction import Transaction
+from linguine.transaction_exception import TransactionException
 
 """
 Check to ensure Tornado is installed
@@ -18,19 +20,20 @@ except ImportError:
 
 class MainHandler(tornado.web.RequestHandler):
 	def post(self):
-		transaction = Transaction()
-		if transaction.parse_json(self.request.body):
-			if transaction.run():
-				self.write(transaction.get_json_response())
-			else:
-				self.write("Error processing transaction")
-		else:
-			self.write("Not a JSON file")
-
+		self.set_header('Content-Type', 'application/json')
+		try:
+			transaction = Transaction()
+			transaction.parse_json(self.request.body)
+			transaction.run()
+			self.write(transaction.get_json_response())
+		except TransactionException, err:
+			self.set_status(err.code)
+			self.write(json.JSONEncoder().encode({'error': err.error}))
 
 if __name__ == "__main__":
-	application = tornado.web.Application([
-		(r"/", MainHandler),
-		])
-	application.listen(5555)
-	tornado.ioloop.IOLoop.instance().start()
+	try:
+		application = tornado.web.Application([(r"/", MainHandler)])
+		application.listen(5555)
+		tornado.ioloop.IOLoop.instance().start()
+	except KeyboardInterrupt:
+		pass
