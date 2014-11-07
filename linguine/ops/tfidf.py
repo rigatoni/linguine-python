@@ -3,9 +3,8 @@
 Given a set of texts, calculates the TF-IDF for each word-text pair in the set.
 Returns: A list of tuples pairing corpus name to TFIDF list - each TFIDF list is
 a sorted list of tuples mapping TFIDF value to a string token.
-Given: Data containing a list of tuples, tuple element one being the corpus name/ID,
-element two being a list of all tokens in the corpus, i.e.
-[ ('1',['hello', 'world']), ('2',['how', 'now', 'brown', 'cow']), ('3',['and', 'how']) ]
+Given: Data containing a list of lists of all tokens in each corpus, i.e.
+[ ['hello', 'world'],['how', 'now', 'brown', 'cow'],['and', 'how'] ]
 """
 import math, nltk, re, pprint
 from nltk import word_tokenize
