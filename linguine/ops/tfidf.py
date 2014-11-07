@@ -17,32 +17,32 @@ class tfidf:
         self.global_term_freq = {}
         self.num_docs = 0
     def run(self, data):
-        self.num_docs = len(data.data_ids)
+        self.num_docs = len(data.corpora)
         result = []
-        for index, doc in enumerate(data.data):
+        for corpus in data.corpora:
             terms_in_doc = {}
-            tokens = word_tokenize(doc)
+            tokens = word_tokenize(corpus["contents"])
             for word in tokens:
                 if word in terms_in_doc:
                     terms_in_doc[word] += 1
                 else:
                     terms_in_doc[word] = 1
-            for (word,freq) in terms_in_doc.items():
+            for (word, freq) in terms_in_doc.items():
                 #If the word appears in a doc, increment the # of docs containing the word by 1
                 if word in self.global_term_freq:
                     self.global_term_freq[word] += 1
                 else:
                     self.global_term_freq[word] = 1
-            self.global_terms_in_doc[data.data_ids[index]] = terms_in_doc
-        for index, doc in enumerate(data.data):
+            self.global_terms_in_doc[corpus["_id"]] = terms_in_doc
+        for corpus in data.corpora:
             max_freq = 0
             doc_result = []
-            for (term, freq) in self.global_terms_in_doc[data.data_ids[index]].items():
+            for (term, freq) in self.global_terms_in_doc[corpus["_id"]].items():
                 if freq > max_freq:
                     max_freq = freq
-            for (term, freq) in self.global_terms_in_doc[data.data_ids[index]].items():
+            for (term, freq) in self.global_terms_in_doc[corpus["_id"]].items():
                 idf = math.log(float(1 + self.num_docs) / float(1 + self.global_term_freq[term]))
                 tfidf = float(freq) / float(max_freq) * float(idf)
                 doc_result.append((tfidf, term))
-            result.append((data.data_ids[index],sorted(doc_result, reverse=True)))
+            result.append((corpus["_id"], sorted(doc_result, reverse=True)))
         return result

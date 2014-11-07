@@ -7,11 +7,11 @@ from bson.objectid import ObjectId
 class Transaction:
 
     def __init__(self, env=None):
-        self.transactionID = -1
+        self.transaction_id = -1
         self.library = None
         self.operation = None
-        self.data_ids = []
-        self.data = []
+        self.corpora_ids = []
+        self.corpora = []
         self.results = None
         self.error = None
         if env:
@@ -26,11 +26,10 @@ class Transaction:
     def parse_json(self, json_data):
         try:
             input_data = json.loads(json_data)
-            self.transactionID = input_data['transactionID']
+            self.transaction_id = input_data['transaction_id']
             self.operation = input_data['operation']
             self.library = input_data['library']
-            self.data_ids = input_data['data']
-            #self.results = input_data['results']
+            self.corpora_ids = input_data['corpora_ids']
         except TypeError:
             self.error = "Improperly formatted request"
             return False
@@ -38,9 +37,8 @@ class Transaction:
         try:
             #connects to MongoDB on localhost:27017
             corpora = MongoClient()[self.db].corpus
-            for dataID in self.data_ids:
-                value = corpora.find_one({})
-                self.data.append(corpora.find_one({"_id" : ObjectId(str(dataID))})['contents'])
+            for id in self.corpora_ids:
+                self.corpora.append(corpora.find_one({"_id" : ObjectId(str(id))}))
             return True
         except TypeError:
             self.error = "Could not find requested data ID"
@@ -60,9 +58,14 @@ class Transaction:
 
     def get_json_response(self):
         analysis_collection = MongoClient()[self.db].analysis
-        analysis_doc = {'corpora_ids':self.data_ids, 'cleanup_ids':[], 'result':self.results}
+        analysis_doc = {'corpora_ids':self.corpora_ids,
+                        'cleanup_ids':[],
+                        'result':self.results}
         resultID = analysis_collection.insert(analysis_doc)
-        response = {'transactionID':self.transactionID, 'library':self.library, 'operation':self.operation, 'results':str(resultID)}
+        response = {'transaction_id': self.transaction_id,
+                    'library':self.library,
+                    'operation':self.operation,
+                    'results':str(resultID)}
         if not self.error == None:
             response['error'] = self.error
         return json.JSONEncoder().encode(response)
