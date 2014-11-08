@@ -24,8 +24,7 @@ class MainHandler(tornado.web.RequestHandler):
 		try:
 			transaction = Transaction()
 			transaction.parse_json(self.request.body)
-			transaction.run()
-			self.write(transaction.get_json_response())
+			self.write(transaction.run())
 		except TransactionException, err:
 			self.set_status(err.code)
 			self.write(json.JSONEncoder().encode({'error': err.error}))

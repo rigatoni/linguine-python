@@ -1,9 +1,10 @@
 import json
+import linguine.database
 import linguine.operation_builder
-import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
+from linguine.database_adapter import DatabaseAdapter
 from linguine.transaction_exception import TransactionException
 
 class Transaction:
@@ -14,16 +15,6 @@ class Transaction:
         self.operation = None
         self.corpora_ids = []
         self.corpora = []
-        self.results = None
-        self.error = None
-        if env:
-            self.db = 'linguine-' + env
-        elif 'NODE_ENV' in os.environ:
-            #Look for Node environment to determine db name.
-            self.db = 'linguine-' + os.environ['NODE_ENV']
-        else:
-            #NODE_ENV not found, default to development
-            self.db = 'linguine-development'
 
     def parse_json(self, json_data):
         try:
@@ -36,36 +27,21 @@ class Transaction:
             raise TransactionException('Missing property transaction_id, operation, library, or corpora_ids.')
         except ValueError:
             raise TransactionException('Could not parse JSON.')
-        except TypeError:
-            raise TransactionException('Improperly formatted request.')
         try:
-            #connects to MongoDB on localhost:27017
-            corpora = MongoClient()[self.db].corpus
+            corpora = DatabaseAdapter.getDB().corpus
             for id in self.corpora_ids:
                 self.corpora.append(corpora.find_one({"_id" : ObjectId(str(id))}))
         except (TypeError, InvalidId):
             raise TransactionException('Could not find corpus.')
 
     def run(self):
-        if self.operation == None:
-            raise TransactionException('No operation indicated.')
-        try:
-            op_handler = linguine.operation_builder.get_operation_handler(self.operation)
-            self.results = op_handler.run(self)
-            return self.results
-        except RuntimeError:
-            raise TransactionException('Invalid operation requested.')
-
-    def get_json_response(self):
-        analysis_collection = MongoClient()[self.db].analysis
-        analysis_doc = {'corpora_ids':self.corpora_ids,
-                        'cleanup_ids':[],
-                        'result':self.results}
-        resultID = analysis_collection.insert(analysis_doc)
+        op_handler = linguine.operation_builder.get_operation_handler(self.operation)
+        analysis = {'corpora_ids':self.corpora_ids,
+                    'cleanup_ids':[],
+                    'result':op_handler.run(self)}
+        analysis_id = DatabaseAdapter.getDB().analysis.insert(analysis)
         response = {'transaction_id': self.transaction_id,
                     'library':self.library,
                     'operation':self.operation,
-                    'results':str(resultID)}
-        if not self.error == None:
-            response['error'] = self.error
+                    'results':str(analysis_id)}
         return json.JSONEncoder().encode(response)
