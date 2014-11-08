@@ -50,3 +50,5 @@ class tfidf:
             return result
         except LookupError:
             raise TransactionException('NLTK \'Punkt\' Model not installed.', 500)
+        except TypeError:
+            raise TransactionException('Corpus contents does not exist.')
