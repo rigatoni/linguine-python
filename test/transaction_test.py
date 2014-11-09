@@ -32,7 +32,6 @@ class TransactionTest(unittest.TestCase):
         test_contents_id = corpora.insert({"title": "A Tale of Two Cities", "contents" : "it was the best of times it was the worst of times it was the age of whatever it was the age of whatever", "tags": [] })
         self.test_data = '{"transaction_id":"1", "operation":"NoOp", "library":"no_library", "corpora_ids":["' + str(test_contents_id) + '"]}'
 
-
         #execute code
         self.trans.parse_json(self.test_data)
         # self.assertEqual(self.trans.run(), "it was the best of times it was the worst of times it was the age of whatever it was the age of whatever")
