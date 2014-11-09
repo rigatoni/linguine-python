@@ -7,7 +7,7 @@ Uses TextBlob's tagger implementation because NLTK is stupid and released a
 broken tagger trainer for their 3.0 release.
 """
 from textblob import TextBlob
-class pos_tag:
+class PosTag:
     def __init__(self):
         pass
     def run(self, data):

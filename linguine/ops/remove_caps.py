@@ -8,14 +8,15 @@ greedy: removes all caps. GOAL -> goal, Mr. -> mr., Cook -> cook
 preserve_nnp: removes capitalization that isn't a proper noun.
 """
 from textblob import TextBlob
-class remove_caps_greedy:
+class RemoveCapsGreedy:
     def run(self, data):
         return(data.lower())
-class remove_caps_preserve_nnp:
+
+class RemoveCapsPreserveNNP:
     def run(self, data):
         blob = TextBlob(data)
         tags = blob.tags
-        words = list()  
+        words = list()
         wordCount = 0
         tokenCount = 0
         while(tokenCount < len(blob.tokens)):
@@ -30,4 +31,4 @@ class remove_caps_preserve_nnp:
                 [words[len(words)-1],blob.tokens[tokenCount]])
             tokenCount += 1
         return(' '.join(words))
-  
+

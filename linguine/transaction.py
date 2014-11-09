@@ -1,6 +1,6 @@
 import json
 import linguine.operation_builder
-import linguine.corpus
+from linguine.corpus import Corpus
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
@@ -31,8 +31,8 @@ class Transaction:
             #load corpora from database
             corpora = DatabaseAdapter.getDB().corpus
             for id in self.corpora_ids:
-                corpus = corpora.append(corpora.find_one({"_id" : ObjectId(str(id))}))
-                self.corpora.append[Corpus(id, corpus["contents"], corpus["title"], corpus["tags"])]
+                corpus = corpora.find_one({"_id" : ObjectId(id)})
+                self.corpora.append(Corpus(id, corpus["contents"], corpus["title"], corpus["tags"]))
         except (TypeError, InvalidId):
             raise TransactionException('Could not find corpus.')
 
@@ -40,7 +40,7 @@ class Transaction:
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
         analysis = {'corpora_ids':self.corpora_ids,
                     'cleanup_ids':[],
-                    'result':op_handler.run(self),
+                    'result':op_handler.run(self.corpora),
                     'analysis':self.operation}
         analysis_id = DatabaseAdapter.getDB().analysis.insert(analysis)
         response = {'transaction_id': self.transaction_id,

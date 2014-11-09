@@ -1,15 +1,15 @@
 import unittest
 import sys
 
-from linguine.ops.remove_punct import remove_punct
+from linguine.ops.remove_punct import RemovePunct
 
-class remove_punct_test(unittest.TestCase):
+class RemovePunctTest(unittest.TestCase):
 
     def setUp(self):
-        self.op = remove_punct()
+        self.op = RemovePunct()
 
     def test_run(self):
-        self.op = remove_punct()
+        self.op = RemovePunct()
         self.test_data = '''He said,"that's it." *u* Hello, World. O'Rourke is rockin'.'''
         self.assertEqual(self.op.run(self.test_data), '''He said that s it Hello World O Rourke is rockin''')
 

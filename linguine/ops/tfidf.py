@@ -8,7 +8,7 @@ import math, nltk, re, pprint
 from linguine.transaction_exception import TransactionException
 from nltk import word_tokenize
 
-class tfidf:
+class Tfidf:
     def __init__(self):
         # a list of (words-freq) pairs for each document
         self.global_terms_in_doc = {}

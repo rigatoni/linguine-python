@@ -1,10 +1,10 @@
 #A null operation
 #Useful for unit testing or acting as a placeholder
 
-class no_op:
+class NoOp:
 
     def run(self, data):
         if len(data) > 0:
-            return data[0]
+            return data[0].to_dict()
         else:
             return ""

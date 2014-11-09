@@ -1,8 +1,7 @@
 import sys
-
-from linguine.ops.no_op import no_op
-from linguine.ops.tfidf import tfidf
 from linguine.transaction_exception import TransactionException
+from linguine.ops.no_op import NoOp
+import linguine.operations
 
 def get_operation_handler(operation):
     if operation in globals():
