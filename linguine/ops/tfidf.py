@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 """
 Given a set of texts, calculates the TF-IDF for each word-text pair in the set.
-Returns: A list of tuples pairing corpus name to TFIDF list - each TFIDF list is
-a sorted list of tuples mapping TFIDF value to a string token.
-Given: Data containing a list of lists of all tokens in each corpus, i.e.
-[ ['hello', 'world'],['how', 'now', 'brown', 'cow'],['and', 'how'] ]
+Returns: A list of dictionaries containing a term, a corpus id, the term's importance in that corpus.
+Given: A list of corpuses
 """
 import math, nltk, re, pprint
 from linguine.transaction_exception import TransactionException
@@ -18,12 +16,12 @@ class tfidf:
         self.global_term_freq = {}
         self.num_docs = 0
     def run(self, data):
-        self.num_docs = len(data.corpora)
-        result = []
+        self.num_docs = len(data)
         try:
-            for corpus in data.corpora:
+            results = []
+            for corpus in data:
                 terms_in_doc = {}
-                tokens = word_tokenize(corpus["contents"])
+                tokens = word_tokenize(corpus.contents)
                 for word in tokens:
                     if word in terms_in_doc:
                         terms_in_doc[word] += 1
@@ -35,19 +33,17 @@ class tfidf:
                         self.global_term_freq[word] += 1
                     else:
                         self.global_term_freq[word] = 1
-                self.global_terms_in_doc[corpus["_id"]] = terms_in_doc
-            for corpus in data.corpora:
+                self.global_terms_in_doc[corpus.id] = terms_in_doc
+            for corpus in data:
                 max_freq = 0
-                doc_result = []
-                for (term, freq) in self.global_terms_in_doc[corpus["_id"]].items():
+                for (term, freq) in self.global_terms_in_doc[corpus.id].items():
                     if freq > max_freq:
                         max_freq = freq
-                for (term, freq) in self.global_terms_in_doc[corpus["_id"]].items():
+                for (term, freq) in self.global_terms_in_doc[corpus.id].items():
                     idf = math.log(float(1 + self.num_docs) / float(1 + self.global_term_freq[term]))
                     tfidf = float(freq) / float(max_freq) * float(idf)
-                    doc_result.append((tfidf, term))
-                result.append((corpus["_id"], sorted(doc_result, reverse=True)))
-            return result
+                    results.append({ "term" : term, "importance" : tfidf, "corpus_id" : corpus.id })
+            return results
         except LookupError:
             raise TransactionException('NLTK \'Punkt\' Model not installed.', 500)
         except TypeError:
