@@ -7,7 +7,7 @@ class remove_punct_test(unittest.TestCase):
 
     def setUp(self):
         self.op = remove_caps_greedy()
-        nltk.download('all')
+        nltk.download('punkt')
 
     def test_run_greedy(self):
         self.op = remove_caps_greedy()
