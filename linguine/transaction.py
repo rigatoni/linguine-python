@@ -42,7 +42,7 @@ class Transaction:
                     'cleanup_ids':[],
                     'result':op_handler.run(self),
                     'analysis':self.operation}
-        analysis_id = DatabaseAdapter.getDB().analysis.insert(analysis)
+        analysis_id = DatabaseAdapter.getDB().analyses.insert(analysis)
         response = {'transaction_id': self.transaction_id,
                     'library':self.library,
                     'operation':self.operation,
