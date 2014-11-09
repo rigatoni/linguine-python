@@ -17,7 +17,7 @@ class transaction_test(unittest.TestCase):
         db = 'linguine-test'
         corpora = MongoClient()[db].corpus
         test_contents_id = corpora.insert({"contents" : "it was the best of times it was the worst of times it was the age of whatever it was the age of whatever"})
-        self.test_data = '{"transaction_id":"1", "operation":"no_op", "library":"no_library", "data":["' + str(test_contents_id) + '"]}'
+        self.test_data = '{"transaction_id":"1", "operation":"no_op", "library":"no_library", "corpora_ids":["' + str(test_contents_id) + '"]}'
 
         #execute code
         self.assertTrue(self.trans.parse_json(self.test_data))
@@ -30,7 +30,7 @@ class transaction_test(unittest.TestCase):
         db = 'linguine-test'
         corpora = MongoClient()[db].corpus
         test_contents_id = corpora.insert({"contents" : "it was the best of times it was the worst of times it was the age of whatever it was the age of whatever"})
-        self.test_data = '{"transaction_id":"1", "operation":"no_op", "library":"no_library", "data":["' + str(test_contents_id) + '"]}'
+        self.test_data = '{"transaction_id":"1", "operation":"no_op", "library":"no_library", "corpora_ids":["' + str(test_contents_id) + '"]}'
 
         #execute code
         self.trans.parse_json(self.test_data)
