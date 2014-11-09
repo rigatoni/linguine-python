@@ -1,5 +1,4 @@
 import json
-import linguine.database
 import linguine.operation_builder
 from pymongo import MongoClient
 from bson.objectid import ObjectId
