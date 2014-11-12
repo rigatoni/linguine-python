@@ -13,6 +13,7 @@ class Transaction:
         self.transaction_id = -1
         self.library = None
         self.operation = None
+        self.user_id = None
         self.corpora_ids = []
         self.corpora = []
 
@@ -22,6 +23,7 @@ class Transaction:
             self.transaction_id = input_data['transaction_id']
             self.operation = input_data['operation']
             self.library = input_data['library']
+            self.user_id = input_data['user_id']
             self.corpora_ids = input_data['corpora_ids']
         except KeyError:
             raise TransactionException('Missing property transaction_id, operation, library, or corpora_ids.')
@@ -38,7 +40,8 @@ class Transaction:
 
     def run(self):
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
-        analysis = {'corpora_ids':self.corpora_ids,
+        analysis = {'user_id':self.user_id,
+                    'corpora_ids':self.corpora_ids,
                     'cleanup_ids':[],
                     'result':op_handler.run(self.corpora),
                     'analysis':self.operation}
