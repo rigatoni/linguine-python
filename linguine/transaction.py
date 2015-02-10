@@ -16,14 +16,19 @@ class Transaction:
         self.user_id = None
         self.corpora_ids = []
         self.corpora = []
+        self.cleanups = []
 
     def parse_json(self, json_data):
         try:
-            input_data = json.loads(json_data)
+            input_data = json.loads(json_data.decode())
+            print(input_data)
             self.transaction_id = input_data['transaction_id']
             self.operation = input_data['operation']
             self.library = input_data['library']
-            self.user_id = input_data['user_id']
+            if 'user_id' in input_data.keys():
+                self.user_id = input_data['user_id']
+            if 'cleanup' in input_data.keys():
+                self.cleanups = input_data['cleanup']
             self.corpora_ids = input_data['corpora_ids']
         except KeyError:
             raise TransactionException('Missing property transaction_id, operation, library, or corpora_ids.')
@@ -39,14 +44,19 @@ class Transaction:
             raise TransactionException('Could not find corpus.')
 
     def run(self):
+        corpora = self.corpora
+        for cleanup in self.cleanups:
+            op_handler = linguine.operation_builder.get_operation_handler(cleanup)
+            corpora = op_handler.run(corpora)
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
         analysis = {'user_id':self.user_id,
                     'corpora_ids':self.corpora_ids,
-                    'cleanup_ids':[],
-                    'result':op_handler.run(self.corpora),
+                    'cleanup_ids':self.cleanups,
+                    'result':op_handler.run(corpora),
                     'analysis':self.operation}
         analysis_id = DatabaseAdapter.getDB().analyses.insert(analysis)
         response = {'transaction_id': self.transaction_id,
+                    'cleanup_ids': self.cleanups,
                     'library':self.library,
                     'operation':self.operation,
                     'results':str(analysis_id)}

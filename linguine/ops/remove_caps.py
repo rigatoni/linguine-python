@@ -10,7 +10,11 @@ preserve_nnp: removes capitalization that isn't a proper noun.
 from textblob import TextBlob
 class RemoveCapsGreedy:
     def run(self, data):
-        return(data.lower())
+        cleaned_data = []
+        for corpus in data:
+            cleaned_data.append(corpus.contents.lower())
+            corpus.contents = corpus.contents.lower()
+        return data
 
 class RemoveCapsPreserveNNP:
     def run(self, data):
