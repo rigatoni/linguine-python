@@ -12,7 +12,8 @@ class TopicModelTest(unittest.TestCase):
         self.op = TopicModel()
         self.test_data = [line.strip() for line in open('brown.txt','r')]
         self.test_data = [[w for w in d.lower().split() ] for d in self.test_data]
-        print(TopicModel(self.test_data))
+        self.assertIsNotNone(self.op.test_run(self.test_data))
+
 
 if __name__ == '__main__':
     unittest.main()
