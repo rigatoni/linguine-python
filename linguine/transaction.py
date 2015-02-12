@@ -49,7 +49,7 @@ class Transaction:
             op_handler = linguine.operation_builder.get_operation_handler(cleanup)
             corpora = op_handler.run(corpora)
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
-        analysis = {'user_id':self.user_id,
+        analysis = {'user_id':ObjectId(self.user_id),
                     'corpora_ids':self.corpora_ids,
                     'cleanup_ids':self.cleanups,
                     'result':op_handler.run(corpora),
