@@ -36,8 +36,8 @@ class FooOp:
 ## Development
 
 1. `pip install -r requirements.txt`
-2. `python -m linguine.webserver`
-3. `python -m textblob.download_corpora`
+2. `python -m textblob.download_corpora`
+3. `python -m linguine.webserver`
 
 To run tests:
 
