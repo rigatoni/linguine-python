@@ -8,6 +8,7 @@ from linguine.ops.remove_caps import RemoveCapsGreedy
 from linguine.ops.remove_caps import RemoveCapsPreserveNNP
 from linguine.ops.remove_punct import RemovePunct
 from linguine.ops.stem import StemmerLancaster, StemmerPorter, StemmerSnowball
+from linguine.ops.topic_model import TopicModel
 
 def get_operation_handler(operation):
     if operation == 'tfidf':
