@@ -9,5 +9,6 @@ class RemovePunct:
         results = []
         tokenizer = RegexpTokenizer(r'((?<=[^\w\s])\w(?=[^\w\s])|(\W))+', gaps=True)
         for corpus in data:
-            results.append(" ".join(tokenizer.tokenize(corpus)))
+            corpus.contents = " ".join(tokenizer.tokenize(corpus.contents))
+            results.append(corpus)
         return results
