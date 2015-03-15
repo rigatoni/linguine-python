@@ -18,21 +18,25 @@ class RemoveCapsGreedy:
 
 class RemoveCapsPreserveNNP:
     def run(self, data):
-        blob = TextBlob(data)
-        tags = blob.tags
-        words = list()
-        wordCount = 0
-        tokenCount = 0
-        while(tokenCount < len(blob.tokens)):
-            if blob.tokens[tokenCount][0].isalpha():
-                if tags[wordCount][1] != 'NNP':
-                    words.append(blob.words[wordCount].lower())
+        results = []
+        for corpus in data:
+            blob = TextBlob(corpus.contents)
+            tags = blob.tags
+            words = list()
+            wordCount = 0
+            tokenCount = 0
+            while(tokenCount < len(blob.tokens)):
+                if blob.tokens[tokenCount][0].isalpha():
+                    if tags[wordCount][1] != 'NNP':
+                        words.append(blob.words[wordCount].lower())
+                    else:
+                        words.append(blob.words[wordCount])
+                    wordCount += 1
                 else:
-                    words.append(blob.words[wordCount])
-                wordCount += 1
-            else:
-                words[len(words)-1] = ''.join(
-                [words[len(words)-1],blob.tokens[tokenCount]])
-            tokenCount += 1
-        return(' '.join(words))
+                    words[len(words)-1] = ''.join(
+                    [words[len(words)-1],blob.tokens[tokenCount]])
+                tokenCount += 1
+            corpus.contents = (' '.join(words))
+            results.append(corpus)
+        return results
 
