@@ -50,21 +50,23 @@ class FooOp:
   "operation": "tfidf", // The analytic operation to be performed.
   "library": "nltk", // The library to use when executing the analysis.
   "corpora_ids": ["id1", "id2", "etc"] // The corpora ID's to run the analysis on.
+  "user_id": "user1", // The user who requested the analysis.
+  "cleanup": ["removeCapsGreedy","removePunct", "etc"] // The cleanup operations to perform on the text.
 }
 ```
 ## Currently implemented operations:
 
-*Remove capitalization
-*Remove punctuation
-*Stem words
-*TF-IDF
-*Word Cloud
-*Part of Speech tagging
-*Topic Modeling
+* Remove capitalization
+* Remove punctuation
+* Stem words
+* TF-IDF
+* Word Cloud
+* Part of Speech tagging
+* Topic Modeling
 
 ## Dependencies
 
-* Python 3
+* Python 3.3 or newer
 * MongoDB
 * [NLTK Punkt model](http://stackoverflow.com/questions/4867197/failed-loading-english-pickle-with-nltk-data-load)
 
@@ -78,3 +80,5 @@ To run tests:
 
 1. `pip install -r requirements.txt`
 2. `nosetests`
+
+Note: running the program from a directory other than the linguine-python root directory will cause directory linking errors.
