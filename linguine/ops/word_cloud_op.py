@@ -1,4 +1,3 @@
-from nltk import word_tokenize
 class WordCloudOp:
 
     def run(self, data):
@@ -6,7 +5,7 @@ class WordCloudOp:
         results = [ ]
         try:
             for corpus in data:
-                tokens = word_tokenize(corpus.contents)
+                tokens = corpus.contents
                 for token in tokens:
                     if token in terms:
                         terms[token]+=1

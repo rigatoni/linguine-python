@@ -13,16 +13,28 @@ class StemmerSnowball:
         pass
     def run(self, data):
     	english = EnglishStemmer()
-        return [english.stem(word) for word in data]
+    	results = []
+        for corpus in data:
+	        corpus.contents = [english.stem(word) for word in corpus.contents]
+	        results.append(corpus)
+	    return results
 class StemmerLancaster:
     def __init__(self):
         pass
     def run(self, data):
     	lancaster = LancasterStemmer()
-        return [lancaster.stem(word) for word in data]
+    	results = []
+        for corpus in data:
+        	corpus.contents = [lancaster.stem(word) for word in corpus.contents]
+        	results.append(corpus)
+        return results
 class StemmerPorter:
     def __init__(self):
         pass
     def run(self, data):
     	porter = PorterStemmer()
-        return [porter.stem(word) for word in data]
+    	results = []
+        for corpus in data:
+        	corpus.contents = [porter.stem(word) for word in data]
+        	results.append(corpus)
+        return results
