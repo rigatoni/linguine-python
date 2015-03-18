@@ -9,29 +9,42 @@ from linguine.ops.remove_caps import RemoveCapsPreserveNNP
 from linguine.ops.remove_punct import RemovePunct
 from linguine.ops.stem import StemmerLancaster, StemmerPorter, StemmerSnowball
 from linguine.ops.topic_model import TopicModel
+from linguine.ops.word_tokenize import WordTokenizeTreebank, WordTokenizeWhitespacePunct, WordTokenizeStanford, WordTokenizeSpaces, WordTokenizeTabs
 
 def get_operation_handler(operation):
-    if operation == 'tfidf':
-        return Tfidf()
-    elif operation == 'wordcloudop':
-    	return WordCloudOp()
-    elif operation == 'pos_tag':
+    if operation == 'pos_tag':
         return PosTag()
+    elif operation == 'removecapsgreedy':
+        return RemoveCapsGreedy()
+    elif operation == 'removecapsnnp':
+        return RemoveCapsPreserveNNP()
+    elif operation == 'removepunct':
+        return RemovePunct()
+    elif operation == 'sentence_tokenize':
+        return SentenceTokenize()
     elif operation == 'stem_porter':
         return StemmerPorter()
     elif operation == 'stem_lancaster':
         return StemmerLancaster()
     elif operation == 'stem_snowball':
         return StemmerSnowball()
+    elif operation == 'tfidf':
+        return Tfidf()
     elif operation == 'topic_model':
         return TopicModel()
+    elif operation == 'wordcloudop':
+        return WordCloudOp()
+    elif operation == 'word_tokenize_treebank':
+        return WordTokenizeTreebank()
+    elif operation == 'word_tokenize_whitespace_punct':
+        return WordTokenizeWhitespacePunct()
+    elif operation == 'word_tokenize_stanford':
+        return WordTokenizeStanford()
+    elif operation == 'word_tokenize_spaces':
+        return WordTokenizeSpaces()
+    elif operation == 'word_tokenize_tabs':
+        return WordTokenizeTabs()
     elif operation == 'noop':
     	return NoOp()
-    elif operation == 'removecapsgreedy':
-    	return RemoveCapsGreedy()
-    elif operation == 'removecapsnnp':
-    	return RemoveCapsPreserveNNP()
-    elif operation == 'removepunct':
-        return RemovePunct()
     else:
         raise TransactionException("The requested operation does not exist.")
