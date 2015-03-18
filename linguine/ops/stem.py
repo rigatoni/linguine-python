@@ -13,31 +13,25 @@ class StemmerSnowball:
         pass
     def run(self, data):
     	english = EnglishStemmer()
-    	results = []
         for corpus in data:
 	        corpus.tokenized_contents = [english.stem(word) for word in corpus.tokenized_contents]
             corpus.contents = ''.join(corpus.tokenized_contents)
-	        results.append(corpus)
-	    return results
+	    return data
 class StemmerLancaster:
     def __init__(self):
         pass
     def run(self, data):
     	lancaster = LancasterStemmer()
-    	results = []
         for corpus in data:
         	corpus.tokenized_contents = [lancaster.stem(word) for word in corpus.tokenized_contents]
             corpus.contents = ''.join(corpus.tokenized_contents)
-        	results.append(corpus)
-        return results
+        return data
 class StemmerPorter:
     def __init__(self):
         pass
     def run(self, data):
     	porter = PorterStemmer()
-    	results = []
         for corpus in data:
         	corpus.tokenized_contents = [porter.stem(word) for word in corpus.tokenized_contents]
             corpus.contents = ''.join(corpus.tokenized_contents)
-        	results.append(corpus)
-        return results
+        return data
