@@ -20,7 +20,7 @@ class Tfidf:
             results = []
             for corpus in data:
                 terms_in_doc = {}
-                tokens = corpus.contents
+                tokens = corpus.tokenized_contents
                 for word in tokens:
                     if word in terms_in_doc:
                         terms_in_doc[word] += 1

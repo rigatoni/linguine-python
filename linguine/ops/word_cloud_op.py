@@ -5,7 +5,7 @@ class WordCloudOp:
         results = [ ]
         try:
             for corpus in data:
-                tokens = corpus.contents
+                tokens = corpus.tokenized_contents
                 for token in tokens:
                     if token in terms:
                         terms[token]+=1
