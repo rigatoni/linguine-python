@@ -15,7 +15,8 @@ class StemmerSnowball:
     	english = EnglishStemmer()
     	results = []
         for corpus in data:
-	        corpus.contents = [english.stem(word) for word in corpus.contents]
+	        corpus.tokenized_contents = [english.stem(word) for word in corpus.tokenized_contents]
+            corpus.contents = ''.join(corpus.tokenized_contents)
 	        results.append(corpus)
 	    return results
 class StemmerLancaster:
@@ -25,7 +26,8 @@ class StemmerLancaster:
     	lancaster = LancasterStemmer()
     	results = []
         for corpus in data:
-        	corpus.contents = [lancaster.stem(word) for word in corpus.contents]
+        	corpus.tokenized_contents = [lancaster.stem(word) for word in corpus.tokenized_contents]
+            corpus.contents = ''.join(corpus.tokenized_contents)
         	results.append(corpus)
         return results
 class StemmerPorter:
@@ -35,6 +37,7 @@ class StemmerPorter:
     	porter = PorterStemmer()
     	results = []
         for corpus in data:
-        	corpus.contents = [porter.stem(word) for word in data]
+        	corpus.tokenized_contents = [porter.stem(word) for word in corpus.tokenized_contents]
+            corpus.contents = ''.join(corpus.tokenized_contents)
         	results.append(corpus)
         return results
