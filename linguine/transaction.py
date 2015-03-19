@@ -9,7 +9,7 @@ from linguine.transaction_exception import TransactionException
 
 class Transaction:
     #TOKENIZER LIST: If a new operation requires a user-selected tokenizer, add it here
-    token_based_operations = ['tfidf','word_cloud_op']
+    token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball']
     def __init__(self, env=None):
         self.transaction_id = -1
         self.library = None
@@ -18,7 +18,7 @@ class Transaction:
         self.corpora_ids = []
         self.corpora = []
         self.cleanups = []
-        self.tokenizer = None
+        self.tokenizer = []
 
     def parse_json(self, json_data):
         try:
@@ -32,7 +32,8 @@ class Transaction:
             if 'cleanup' in input_data.keys():
                 self.cleanups = input_data['cleanup']
             self.corpora_ids = input_data['corpora_ids']
-            self.tokenizer = input_data['tokenizer']
+            if 'tokenizer' in input_data.keys():
+                self.tokenizer = input_data['tokenizer']
         except KeyError:
             raise TransactionException('Missing property transaction_id, operation, library, tokenizer or corpora_ids.')
         except ValueError:
@@ -51,8 +52,9 @@ class Transaction:
         for cleanup in self.cleanups:
             op_handler = linguine.operation_builder.get_operation_handler(cleanup)
             corpora = op_handler.run(corpora)
-        op_handler = linguine.operation_builder.get_operation_handler(tokenizer)
-        tokenized_corpora = op_handler.run(corpora)
+        for tokenizer in self.tokenizer:
+            op_handler = linguine.operation_builder.get_operation_handler(tokenizer)
+            tokenized_corpora = op_handler.run(corpora)
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
         if self.operation in token_based_operations:
             analysis = {'user_id':ObjectId(self.user_id),

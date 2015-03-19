@@ -6,7 +6,6 @@ Given: A list of corpuses
 """
 import math, nltk, re, pprint
 from linguine.transaction_exception import TransactionException
-from nltk import word_tokenize
 
 class Tfidf:
     def __init__(self):
@@ -21,7 +20,7 @@ class Tfidf:
             results = []
             for corpus in data:
                 terms_in_doc = {}
-                tokens = word_tokenize(corpus.contents)
+                tokens = corpus.tokenized_contents
                 for word in tokens:
                     if word in terms_in_doc:
                         terms_in_doc[word] += 1
@@ -42,7 +41,7 @@ class Tfidf:
                 for (term, freq) in self.global_terms_in_doc[corpus.id].items():
                     idf = math.log(float(1 + self.num_docs) / float(1 + self.global_term_freq[term]))
                     tfidf = float(freq) / float(max_freq) * float(idf)
-                    results.append({ "term" : term, "importance" : tfidf, "corpus_id" : corpus.id })
+                    results.append({ 'corpus_id' : corpus.id, 'term' : term, 'importance' : tfidf })
             return results
         except LookupError:
             raise TransactionException('NLTK \'Punkt\' Model not installed.', 500)
