@@ -50,7 +50,8 @@ class Transaction:
 
     def run(self):
         corpora = self.corpora
-        tokenized_corpora = self.tokenized_corpora
+        tokenized_corpora = []
+        analysis = {}
         for cleanup in self.cleanups:
             op_handler = linguine.operation_builder.get_operation_handler(cleanup)
             corpora = op_handler.run(corpora)
