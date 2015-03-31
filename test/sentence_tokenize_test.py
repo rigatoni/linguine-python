@@ -12,6 +12,6 @@ class SentenceTokenizeTest(unittest.TestCase):
         self.op = SentenceTokenize()
         self.test_data = [ Corpus("0","hello", "hello world. Will you say goodbye, world? I'll say hello.")]
         self.assertEqual(self.op.run(self.test_data),
-        	{'corpus_id':'0', 'sentences': ["hello world.", "Will you say goodbye, world?","I'll say hello."}
+            {'corpus_id':'0', 'sentences': ["hello world.", "Will you say goodbye, world?","I'll say hello."}
 if __name__ == '__main__':
     unittest.main()

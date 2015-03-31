@@ -13,34 +13,34 @@ class WordTokenizeTreebank:
     def __init__(self):
         pass
     def run(self, data):
-    	for corpus in data:
-	        corpus.tokenized_contents = TreebankWordTokenizer().tokenize(corpus.contents)
-	    return data
+        for corpus in data:
+            corpus.tokenized_contents = TreebankWordTokenizer().tokenize(corpus.contents)
+        return data
 class WordTokenizeWhitespacePunct:
     def __init__(self):
         pass
     def run(self, data):
-    	for corpus in data:
-	        corpus.tokenized_contents = wordpunct_tokenize(corpus.contents)
-	    return data
+        for corpus in data:
+            corpus.tokenized_contents = wordpunct_tokenize(corpus.contents)
+        return data
 class WordTokenizeStanford:
     def __init__(self):
         pass
     def run(self, data):
-    	for corpus in data:
-	        corpus.tokenized_contents = StanfordTokenizer().tokenize(corpus.contents)
-	    return data
+        for corpus in data:
+            corpus.tokenized_contents = StanfordTokenizer().tokenize(corpus.contents)
+        return data
 class WordTokenizeSpaces:
     def __init__(self):
         pass
     def run(self, data):
-    	for corpus in data:
-	        corpus.tokenized_contents = corpus.contents.split(' ')
-	    return data
+        for corpus in data:
+            corpus.tokenized_contents = corpus.contents.split(' ')
+        return data
 class WordTokenizeTabs:
     def __init__(self):
         pass
     def run(self, data):
-    	for corpus in data:
-	        corpus.tokenized_contents = corpus.contents.split('\t')
-	    return data
+        for corpus in data:
+            corpus.tokenized_contents = corpus.contents.split('\t')
+        return data
