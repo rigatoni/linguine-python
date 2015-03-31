@@ -26,7 +26,7 @@ def get_operation_handler(operation):
     elif operation == 'removepunct':
         return RemovePunct()
     elif operation == 'remove_stopwords':
-    	return RemoveStopwords()
+        return RemoveStopwords()
     elif operation == 'sentence_tokenize':
         return SentenceTokenize()
     elif operation == 'stem_porter':
@@ -52,6 +52,6 @@ def get_operation_handler(operation):
     elif operation == 'word_tokenize_tabs':
         return WordTokenizeTabs()
     elif operation == 'noop':
-    	return NoOp()
+        return NoOp()
     else:
         raise TransactionException("The requested operation does not exist.")
