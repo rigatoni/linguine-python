@@ -9,7 +9,10 @@ from linguine.transaction_exception import TransactionException
 
 class Transaction:
     #TOKENIZER LIST: If a new operation requires a user-selected tokenizer, add it here
+	
     token_based_operations = ['tfidf','word_cloud_op','lemmatize_wordnet']
+    token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
+
     def __init__(self, env=None):
         self.transaction_id = -1
         self.library = None
