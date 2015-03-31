@@ -14,9 +14,9 @@ class LemmatizerWordNet:
         for corpus in data:
             tags = nltk.pos_tag(corpus.tokenized_contents)
             lemmatizer = WordNetLemmatizer()
-	        corpus.tokenized_contents = [lemmatizer.lemmatize(word,getWordNetPartOfSpeech(tag)) for (word,tag) in tags]
+            corpus.tokenized_contents = [lemmatizer.lemmatize(word,getWordNetPartOfSpeech(tag)) for (word,tag) in tags]
             corpus.contents = ''.join(corpus.tokenized_contents)
-	    return data
+        return data
     def getWordNetPartOfSpeech(self,treebank_tag):
         #So the WordNetLemmatizer in NLTK expects POS tags in a different format than NLTK itself writes them. 
         #So this function does the conversion to make them compatible.
