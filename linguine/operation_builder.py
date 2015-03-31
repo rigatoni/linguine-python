@@ -25,8 +25,8 @@ def get_operation_handler(operation):
         return RemoveCapsPreserveNNP()
     elif operation == 'removepunct':
         return RemovePunct()
-	elif operation == 'remove_stopwords':
-		return RemoveStopwords()
+    elif operation == 'remove_stopwords':
+    	return RemoveStopwords()
     elif operation == 'sentence_tokenize':
         return SentenceTokenize()
     elif operation == 'stem_porter':
