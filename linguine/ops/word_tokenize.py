@@ -8,7 +8,8 @@ WordTokenizeWhitespacePunct splits the text on whitespace and punctuation marks.
 WordTokenizeSpaces splits the text using the space character as a delimiter.
 WordTokenizeTabs splits the text using the tab character as a delimiter.
 """
-from nltk.tokenize import TreebankWordTokenizer, wordpunct_tokenize, StanfordTokenizer
+from nltk.tokenize import TreebankWordTokenizer, wordpunct_tokenize, 
+from nltk.tokenize.stanford import StanfordTokenizer
 class WordTokenizeTreebank:
     def __init__(self):
         pass
