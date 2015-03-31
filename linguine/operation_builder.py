@@ -8,6 +8,8 @@ from linguine.ops.word_cloud_op import WordCloudOp
 from linguine.ops.remove_caps import RemoveCapsGreedy
 from linguine.ops.remove_caps import RemoveCapsPreserveNNP
 from linguine.ops.remove_punct import RemovePunct
+from linguine.ops.remove_stopwords import RemoveStopwords
+from linguine.ops.sentence_tokenize import SentenceTokenize
 from linguine.ops.stem import StemmerLancaster, StemmerPorter, StemmerSnowball
 from linguine.ops.topic_model import TopicModel
 from linguine.ops.word_tokenize import WordTokenizeTreebank, WordTokenizeWhitespacePunct, WordTokenizeStanford, WordTokenizeSpaces, WordTokenizeTabs
@@ -23,6 +25,8 @@ def get_operation_handler(operation):
         return RemoveCapsPreserveNNP()
     elif operation == 'removepunct':
         return RemovePunct()
+	elif operation == 'remove_stopwords':
+		return RemoveStopwords()
     elif operation == 'sentence_tokenize':
         return SentenceTokenize()
     elif operation == 'stem_porter':
