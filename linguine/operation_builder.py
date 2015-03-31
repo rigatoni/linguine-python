@@ -2,7 +2,7 @@ import sys
 from linguine.transaction_exception import TransactionException
 from linguine.ops.tfidf import Tfidf
 from linguine.ops.no_op import NoOp
-from linguine.ops.lemmatize import LemmatizeWordNet
+from linguine.ops.lemmatize import LemmatizerWordNet
 from linguine.ops.pos_tag import PosTag
 from linguine.ops.word_cloud_op import WordCloudOp
 from linguine.ops.remove_caps import RemoveCapsGreedy
@@ -16,7 +16,7 @@ from linguine.ops.word_tokenize import WordTokenizeTreebank, WordTokenizeWhitesp
 
 def get_operation_handler(operation):
     if operation == 'lemmatize_wordnet':
-        return LemmatizeWordNet()
+        return LemmatizerWordNet()
     elif operation == 'pos_tag':
         return PosTag()
     elif operation == 'removecapsgreedy':
