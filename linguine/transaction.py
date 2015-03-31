@@ -8,11 +8,7 @@ from linguine.database_adapter import DatabaseAdapter
 from linguine.transaction_exception import TransactionException
 
 class Transaction:
-    #TOKENIZER LIST: If a new operation requires a user-selected tokenizer, add it here
     
-    token_based_operations = ['tfidf','word_cloud_op','lemmatize_wordnet']
-    token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
-
     def __init__(self, env=None):
         self.transaction_id = -1
         self.library = None
@@ -22,6 +18,8 @@ class Transaction:
         self.corpora = []
         self.cleanups = []
         self.tokenizer = []
+        #TOKENIZER LIST: If a new operation requires a user-selected tokenizer, add it here
+        self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
 
     def parse_json(self, json_data):
         try:
@@ -59,7 +57,7 @@ class Transaction:
             op_handler = linguine.operation_builder.get_operation_handler(tokenizer)
             tokenized_corpora = op_handler.run(corpora)
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
-        if self.operation in token_based_operations:
+        if self.operation in self.token_based_operations:
             analysis = {'user_id':ObjectId(self.user_id),
                         'corpora_ids':self.corpora_ids,
                         'cleanup_ids':self.cleanups,
