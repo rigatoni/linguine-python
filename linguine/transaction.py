@@ -60,6 +60,9 @@ class Transaction:
             tokenized_corpora = op_handler.run(corpora)
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
         if self.operation in self.token_based_operations:
+            if len(self.tokenizer) == 0:
+                tokenizer_handler = linguine.operation_builder.get_operation_handler('word_tokenize_treebank')
+                tokenized_corpora = tokenizer_handler.run(corpora)
             analysis = {'user_id':ObjectId(self.user_id),
                         'corpora_ids':self.corpora_ids,
                         'cleanup_ids':self.cleanups,
