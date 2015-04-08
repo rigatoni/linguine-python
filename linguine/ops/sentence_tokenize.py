@@ -15,5 +15,5 @@ class SentenceTokenize:
     def run(self, data):
         results = []
         for corpus in data:
-            results.append({'corpus':corpus, 'sentences': sent_tokenize(corpus.contents) }) 
+            results.append({'corpus_id':corpus.id, 'sentences': sent_tokenize(corpus.contents) }) 
         return results
