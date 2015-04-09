@@ -14,5 +14,5 @@ class PosTag:
         results = []
         for corpus in data:
             blob = TextBlob(corpus.contents)
-            results.append({'corpus_id': corpus_id, 'tags': blob.tags })
+            results.append({'corpus_id': corpus.id, 'tags': blob.tags })
         return results

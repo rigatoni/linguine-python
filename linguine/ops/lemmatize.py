@@ -12,19 +12,22 @@ class LemmatizerWordNet:
         pass
     def run(self, data):
         for corpus in data:
-            tags = nltk.pos_tag(corpus.tokenized_contents)
+            tags = pos_tag(corpus.tokenized_contents)
             lemmatizer = WordNetLemmatizer()
-            corpus.tokenized_contents = [lemmatizer.lemmatize(word,getWordNetPartOfSpeech(tag)) for (word,tag) in tags]
+            corpus.tokenized_contents = [lemmatizer.lemmatize(word, self.getWordNetPartOfSpeech(tag)) 
+                                            if not self.getWordNetPartOfSpeech(tag) == None 
+                                            else word 
+                                            for (word,tag) in tags]
             corpus.contents = ''.join(corpus.tokenized_contents)
         return data
     def getWordNetPartOfSpeech(self,treebank_tag):
         #So the WordNetLemmatizer in NLTK expects POS tags in a different format than NLTK itself writes them. 
         #So this function does the conversion to make them compatible.
         if treebank_tag.startswith('J'):
-            return wordnet.ADJ
+            return 'a'
         elif treebank_tag.startswith('V'):
-            return wordnet.VERB
+            return 'v'
         elif treebank_tag.startswith('N'):
-            return wordnet.NOUN
+            return 'n'
         elif treebank_tag.startswith('R'):
-            return wordnet.ADV
+            return 'r'
