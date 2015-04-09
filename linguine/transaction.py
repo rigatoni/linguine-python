@@ -52,12 +52,13 @@ class Transaction:
         corpora = self.corpora
         tokenized_corpora = []
         analysis = {}
-        for cleanup in self.cleanups:
-            op_handler = linguine.operation_builder.get_operation_handler(cleanup)
-            corpora = op_handler.run(corpora)
+        
         if not self.tokenizer == None:
             op_handler = linguine.operation_builder.get_operation_handler(self.tokenizer)
             tokenized_corpora = op_handler.run(corpora)
+        for cleanup in self.cleanups:
+            op_handler = linguine.operation_builder.get_operation_handler(cleanup)
+            corpora = op_handler.run(corpora)
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
 
         if self.operation in self.token_based_operations:

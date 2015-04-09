@@ -15,7 +15,7 @@ class TopicModel:
     def run(self, data):
         wordlists = [corpus.tokenized_contents for corpus in data]
         dictionary = Dictionary(wordlists)
-        dictionary.filter_extremes(no_above=0.5)
+        # dictionary.filter_extremes(no_above=0.5)
         bags_of_words = [ dictionary.doc2bow(t) for t in wordlists]
         #This can take a while to run:
         lda = LdaModel(bags_of_words, id2word = dictionary, num_topics=30, passes=10)
@@ -57,7 +57,7 @@ class TopicModel:
     def assemble_topics(self, lda_model):
         topics = dict()
         for n,topic in enumerate(lda_model.show_topics(formatted=False)):
-            topics[n] = list()
+            topics[str(n)] = list()
             for prob, word in topic:
-                topics[n].append({'probability': prob, 'word': word])
+                topics[str(n)].append({'probability': prob, 'word': word})
         return topics
