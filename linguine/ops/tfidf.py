@@ -39,7 +39,7 @@ class Tfidf:
                     if freq > max_freq:
                         max_freq = freq
                 for (term, freq) in self.global_terms_in_doc[corpus.id].items():
-                    idf = math.log(float(1 + self.num_docs) / float(1 + self.global_term_freq[term]))
+                    idf = math.log(float(self.num_docs) / float(1 + self.global_term_freq[term]))
                     tfidf = float(freq) / float(max_freq) * float(idf)
                     results.append({ 'corpus_id' : corpus.id, 'term' : term, 'importance' : tfidf })
             return results
