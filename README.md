@@ -52,6 +52,7 @@ class FooOp:
   "corpora_ids": ["id1", "id2", "etc"] // The corpora ID's to run the analysis on.
   "user_id": "user1", // The user who requested the analysis.
   "cleanup": ["removeCapsGreedy","removePunct", "etc"] // The cleanup operations to perform on the text.
+  "tokenizer": "whitespaceTokenizer" // The tokenizer to use to break text into word tokens if needed.
 }
 ```
 ## Currently implemented operations:
