@@ -11,5 +11,8 @@ class PosTag:
     def __init__(self):
         pass
     def run(self, data):
-        blob = TextBlob(data)
-        return blob.tags
+        results = []
+        for corpus in data:
+            blob = TextBlob(corpus.contents)
+            results.append({'corpus_id': corpus.id, 'tags': blob.tags })
+        return results

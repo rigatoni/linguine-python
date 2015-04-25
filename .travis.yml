@@ -3,6 +3,13 @@ services: mongodb
 python:
   - "3.4"
   - "3.3"
+  
+before_install:  
+  - sudo apt-get install -qq libblas-dev
+  - sudo apt-get install -qq liblapack-dev
+  - sudo apt-get install -qq gfortran
+  #This might help fix dependency issues with scipy for gensim
+
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: "pip install -r requirements.txt"
 

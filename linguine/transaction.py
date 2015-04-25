@@ -8,23 +8,35 @@ from linguine.database_adapter import DatabaseAdapter
 from linguine.transaction_exception import TransactionException
 
 class Transaction:
-
+    
     def __init__(self, env=None):
         self.transaction_id = -1
         self.library = None
         self.operation = None
+        self.user_id = None
         self.corpora_ids = []
         self.corpora = []
+        self.cleanups = []
+        self.tokenizer = None
+        #TOKENIZER LIST: If a new operation requires a user-selected tokenizer, add it here
+        self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
 
     def parse_json(self, json_data):
         try:
-            input_data = json.loads(json_data)
+            input_data = json.loads(json_data.decode())
+            print(input_data)
             self.transaction_id = input_data['transaction_id']
             self.operation = input_data['operation']
             self.library = input_data['library']
+            if 'user_id' in input_data.keys():
+                self.user_id = input_data['user_id']
+            if 'cleanup' in input_data.keys():
+                self.cleanups = input_data['cleanup']
             self.corpora_ids = input_data['corpora_ids']
+            if 'tokenizer' in input_data.keys():
+                self.tokenizer = input_data['tokenizer']
         except KeyError:
-            raise TransactionException('Missing property transaction_id, operation, library, or corpora_ids.')
+            raise TransactionException('Missing property transaction_id, operation, library, tokenizer or corpora_ids.')
         except ValueError:
             raise TransactionException('Could not parse JSON.')
         try:
@@ -37,14 +49,39 @@ class Transaction:
             raise TransactionException('Could not find corpus.')
 
     def run(self):
+        corpora = self.corpora
+        tokenized_corpora = []
+        analysis = {}
+        
+        if not self.tokenizer == None:
+            op_handler = linguine.operation_builder.get_operation_handler(self.tokenizer)
+            tokenized_corpora = op_handler.run(corpora)
+        for cleanup in self.cleanups:
+            op_handler = linguine.operation_builder.get_operation_handler(cleanup)
+            corpora = op_handler.run(corpora)
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
-        analysis = {'corpora_ids':self.corpora_ids,
-                    'cleanup_ids':[],
-                    'result':op_handler.run(self.corpora),
-                    'analysis':self.operation}
+
+        if self.operation in self.token_based_operations:
+            if self.tokenizer == None:
+                tokenizer_handler = linguine.operation_builder.get_operation_handler('word_tokenize_spaces')
+                tokenized_corpora = tokenizer_handler.run(corpora)
+            analysis = {'user_id':ObjectId(self.user_id),
+                        'corpora_ids':self.corpora_ids,
+                        'cleanup_ids':self.cleanups,
+                        'result':op_handler.run(tokenized_corpora),
+                        'analysis':self.operation}
+        else:
+            analysis = {'user_id':ObjectId(self.user_id),
+                        'corpora_ids':self.corpora_ids,
+                        'cleanup_ids':self.cleanups,
+                        'result':op_handler.run(corpora),
+                        'analysis':self.operation}
+        print(analysis)
         analysis_id = DatabaseAdapter.getDB().analyses.insert(analysis)
         response = {'transaction_id': self.transaction_id,
+                    'cleanup_ids': self.cleanups,
                     'library':self.library,
                     'operation':self.operation,
                     'results':str(analysis_id)}
+        print(response)
         return json.JSONEncoder().encode(response)
