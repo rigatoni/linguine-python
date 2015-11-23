@@ -13,6 +13,7 @@ from linguine.ops.sentence_tokenize import SentenceTokenize
 from linguine.ops.stem import StemmerLancaster, StemmerPorter, StemmerSnowball
 from linguine.ops.topic_model import TopicModel
 from linguine.ops.word_tokenize import WordTokenizeTreebank, WordTokenizeWhitespacePunct, WordTokenizeStanford, WordTokenizeSpaces, WordTokenizeTabs
+from linguine.ops.CoreNLPOperation import CoreNLPOperation
 
 def get_operation_handler(operation):
     if operation == 'lemmatize_wordnet':
@@ -51,6 +52,8 @@ def get_operation_handler(operation):
         return WordTokenizeSpaces()
     elif operation == 'word_tokenize_tabs':
         return WordTokenizeTabs()
+    elif operation == 'core-nlp':
+        return CoreNLPOperation()
     elif operation == 'noop':
         return NoOp()
     else:
