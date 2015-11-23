@@ -44,6 +44,7 @@ class Transaction:
             corpora = DatabaseAdapter.getDB().corpus
             for id in self.corpora_ids:
                 corpus = corpora.find_one({"_id" : ObjectId(id)})
+                print(corpus)
                 self.corpora.append(Corpus(id, corpus["title"], corpus["contents"], corpus["tags"]))
         except (TypeError, InvalidId):
             raise TransactionException('Could not find corpus.')
