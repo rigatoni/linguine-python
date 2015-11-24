@@ -24,6 +24,7 @@ class Transaction:
     def parse_json(self, json_data):
         try:
             input_data = json.loads(json_data.decode())
+
             print(input_data)
             self.transaction_id = input_data['transaction_id']
             self.operation = input_data['operation']
@@ -54,7 +55,7 @@ class Transaction:
         tokenized_corpora = []
         analysis = {}
         
-        if not self.tokenizer == None:
+        if not self.tokenizer == None and not self.tokenizer == '':
             op_handler = linguine.operation_builder.get_operation_handler(self.tokenizer)
             tokenized_corpora = op_handler.run(corpora)
         for cleanup in self.cleanups:
