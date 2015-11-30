@@ -8,6 +8,8 @@ Performs some core NLP operations as a proof of concept for the library.
 from stanford_corenlp_pywrapper import CoreNLP
 
 class StanfordCoreNLP:
+
+    proc = None
     
     """
     When the JSON segments return from the CoreNLP library, they
@@ -19,7 +21,7 @@ class StanfordCoreNLP:
     """
     def jsonCleanup(self, data):
       for corpus in data:
-          res = self.proc.parse_doc(corpus.contents)
+          res = StanfordCoreNLP.proc.parse_doc(corpus.contents)
           for sentence in res["sentences"]:
             words = [] 
             for index, token in enumerate(sentence["tokens"]):
@@ -37,7 +39,8 @@ class StanfordCoreNLP:
     def __init__(self):
         coreNLPPath = os.path.join(os.path.dirname(__file__), '../../lib/stanfordCoreNLP.jar')
         coreNLPModelsPath = os.path.join(os.path.dirname(__file__), '../../lib/stanfordCoreNLPModels.jar')
-        self.proc = CoreNLP('pos', corenlp_jars=[coreNLPPath, coreNLPModelsPath])
+        if StanfordCoreNLP.proc == None:
+            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, dcoref'}, corenlp_jars=[coreNLPPath, coreNLPModelsPath])
 
     def run(self, data):
         return self.jsonCleanup(data) 
