@@ -19,29 +19,31 @@ class StanfordCoreNLP:
     for a given word with that word, making a list of words with their 
     part of speech tags
     """
-    def jsonCleanup(self, data):
+    def jsonCleanup(self, data, analysisTypes):
       for corpus in data:
           res = StanfordCoreNLP.proc.parse_doc(corpus.contents)
           for sentence in res["sentences"]:
             words = [] 
             for index, token in enumerate(sentence["tokens"]):
               word = {}
-
+              
               word["token"] = sentence["tokens"][index]
               word["lemma"] = sentence["lemmas"][index]
-              word["part-of-speech"] = sentence["pos"][index]
+              for atype in analysisTypes:
+                word[atype] = sentence[atype][index]
 
               words.append(word)
 
       return words
 
+    def __init__(self, analysisType):
+        self.analysisType = analysisType
 
-    def __init__(self):
         coreNLPPath = os.path.join(os.path.dirname(__file__), '../../lib/stanfordCoreNLP.jar')
         coreNLPModelsPath = os.path.join(os.path.dirname(__file__), '../../lib/stanfordCoreNLPModels.jar')
         if StanfordCoreNLP.proc == None:
             StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, dcoref'}, corenlp_jars=[coreNLPPath, coreNLPModelsPath])
 
     def run(self, data):
-        return self.jsonCleanup(data) 
+        return self.jsonCleanup(data, self.analysisType) 
 

@@ -15,7 +15,7 @@ class WordCloudOp:
                 results.append({ "term" : term, "frequency" : terms[term]})
 
             #sort results by term frequency
-            results.sort(key=lambda results: results['frequency'], reverse=False)
+            results.sort(key=lambda results: results['frequency'], reverse=True)
             
             return results
         except LookupError:

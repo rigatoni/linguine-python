@@ -52,8 +52,10 @@ def get_operation_handler(operation):
         return WordTokenizeSpaces()
     elif operation == 'word_tokenize_tabs':
         return WordTokenizeTabs()
-    elif operation == 'core-nlp':
-        return StanfordCoreNLP()
+    elif operation == 'nlp-pos':
+        return StanfordCoreNLP(['pos'])
+    elif operation == 'nlp-ner':
+        return StanfordCoreNLP(['pos', 'ner'])
     elif operation == 'noop':
         return NoOp()
     else:
