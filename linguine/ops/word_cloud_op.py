@@ -13,6 +13,10 @@ class WordCloudOp:
                         terms[token]=1
             for term in terms:
                 results.append({ "term" : term, "frequency" : terms[term]})
+
+            #sort results by term frequency
+            results.sort(key=lambda results: results['frequency'], reverse=False)
+            
             return results
         except LookupError:
             raise TransactionException('NLTK \'Punkt\' Model not installed.', 500)
