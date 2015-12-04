@@ -24,6 +24,7 @@ class Transaction:
     def parse_json(self, json_data):
         try:
             input_data = json.loads(json_data.decode())
+
             print(input_data)
             self.transaction_id = input_data['transaction_id']
             self.operation = input_data['operation']
@@ -44,6 +45,7 @@ class Transaction:
             corpora = DatabaseAdapter.getDB().corpus
             for id in self.corpora_ids:
                 corpus = corpora.find_one({"_id" : ObjectId(id)})
+                print(corpus)
                 self.corpora.append(Corpus(id, corpus["title"], corpus["contents"], corpus["tags"]))
         except (TypeError, InvalidId):
             raise TransactionException('Could not find corpus.')
@@ -53,7 +55,7 @@ class Transaction:
         tokenized_corpora = []
         analysis = {}
         
-        if not self.tokenizer == None:
+        if not self.tokenizer == None and not self.tokenizer == '':
             op_handler = linguine.operation_builder.get_operation_handler(self.tokenizer)
             tokenized_corpora = op_handler.run(corpora)
         for cleanup in self.cleanups:
