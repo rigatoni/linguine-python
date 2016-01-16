@@ -73,13 +73,13 @@ class FooOp:
 
 ## Development
 
-1. `sudo ./install_deps.sh`
+1. `sudo pip install -r requirements.txt`
 2. `python -m textblob.download_corpora`
 3. `python -m linguine.webserver`
 
 To run tests:
 
-1. `sudo ./install_deps.sh`
-2. `nosetests`
+1. `sudo pip install -r requirements.txt`
+2. `nosetests` #Requires 'nose' to work properly. Check out https://nose.readthedocs.org/en/latest/ if it's not working for you
 
 Note: running the program from a directory other than the linguine-python root directory will cause directory linking errors.
