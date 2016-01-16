@@ -6,6 +6,10 @@ matrix:
       env: NUMPY=1.8 SCIPY=0.13
 
 before_install:
+ - git clone https://github.com/brendano/stanford_corenlp_pywrapper
+ - cd stanford_corenlp_pywrapper
+ - pip install .
+ - cd ..
  - travis_retry wget http://repo.continuum.io/miniconda/Miniconda-3.8.3-Linux-x86_64.sh -O miniconda.sh
  - chmod +x miniconda.sh
  - bash miniconda.sh -b -p $HOME/miniconda
