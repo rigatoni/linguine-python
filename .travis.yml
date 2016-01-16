@@ -1,19 +1,22 @@
 language: python
-services: mongodb
-python:
-  - "3.4"
-  - "3.3"
-  
-before_install:  
-  - sudo apt-get install -qq libblas-dev
-  - sudo apt-get install -qq liblapack-dev
-  - sudo apt-get install -qq gfortran
-  #This might help fix dependency issues with scipy for gensim
 
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: "pip install -r requirements.txt"
+matrix:
+  include:
+    - python: 2.7
+      env: NUMPY=1.8 SCIPY=0.13
 
-before_script: python -m textblob.download_corpora
+before_install:
+ - travis_retry wget http://repo.continuum.io/miniconda/Miniconda-3.8.3-Linux-x86_64.sh -O miniconda.sh
+ - chmod +x miniconda.sh
+ - bash miniconda.sh -b -p $HOME/miniconda
+ - export PATH=/home/travis/miniconda/bin:$PATH
+ - conda update --yes conda
 
-# command to run tests, e.g. python setup.py test
-script:  PYTHON_ENV=test nosetests
+install:
+ - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+ - source activate test
+ - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pip
+ - pip install -r requirements.txt
+
+script:
+ - nosetests
