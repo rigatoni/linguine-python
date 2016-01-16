@@ -1,3 +1,5 @@
+from linguine.transaction_exception import TransactionException
+
 class WordCloudOp:
 
     def run(self, data):

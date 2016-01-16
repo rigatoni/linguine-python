@@ -3,6 +3,8 @@ import sys
 
 from linguine.ops.word_tokenize import WordTokenizeTreebank, WordTokenizeWhitespacePunct, WordTokenizeStanford, WordTokenizeSpaces, WordTokenizeSpaces
 
+from linguine.corpus import Corpus
+
 class PosTagTest(unittest.TestCase):
 
     def setUp(self):
@@ -14,7 +16,6 @@ class PosTagTest(unittest.TestCase):
         desired_results = []
         desired_results.append({ "corpus_id" : "0", "tokenized_content" : ["hello","world"]})
         desired_results.append({ "corpus_id" : "1", "tokenized_content" : ["goodbye","world"]})
-)
 
 if __name__ == '__main__':
     unittest.main()
