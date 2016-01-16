@@ -6,21 +6,15 @@ matrix:
       env: NUMPY=1.8 SCIPY=0.13
 
 before_install:
- - git clone https://github.com/brendano/stanford_corenlp_pywrapper
- - cd stanford_corenlp_pywrapper
- - pip install .
- - cd ..
  - travis_retry wget http://repo.continuum.io/miniconda/Miniconda-3.8.3-Linux-x86_64.sh -O miniconda.sh
  - chmod +x miniconda.sh
  - bash miniconda.sh -b -p $HOME/miniconda
  - export PATH=/home/travis/miniconda/bin:$PATH
  - conda update --yes conda
-
-install:
- - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
- - source activate test
  - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pip
  - pip install -r requirements.txt
+ - git clone https://github.com/brendano/stanford_corenlp_pywrapper scp_repo
+ - ln -s scp_repo/stanford_corenlp_pywrapper .
 
 script:
  - nosetests
