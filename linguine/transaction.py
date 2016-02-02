@@ -16,8 +16,10 @@ class Transaction:
         self.user_id = None
         self.corpora_ids = []
         self.corpora = []
+        self.analysis_name = ""
         self.cleanups = []
         self.tokenizer = None
+
         #TOKENIZER LIST: If a new operation requires a user-selected tokenizer, add it here
         self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
 
@@ -29,6 +31,7 @@ class Transaction:
             self.transaction_id = input_data['transaction_id']
             self.operation = input_data['operation']
             self.library = input_data['library']
+            self.analysis_name = input_data['analysis_name']
             if 'user_id' in input_data.keys():
                 self.user_id = input_data['user_id']
             if 'cleanup' in input_data.keys():
@@ -68,6 +71,7 @@ class Transaction:
                 tokenizer_handler = linguine.operation_builder.get_operation_handler('word_tokenize_spaces')
                 tokenized_corpora = tokenizer_handler.run(corpora)
             analysis = {'user_id':ObjectId(self.user_id),
+                        'analysis_name': self.analysis_name,
                         'corpora_ids':self.corpora_ids,
                         'cleanup_ids':self.cleanups,
                         'result':op_handler.run(tokenized_corpora),
@@ -75,15 +79,16 @@ class Transaction:
         else:
             analysis = {'user_id':ObjectId(self.user_id),
                         'corpora_ids':self.corpora_ids,
+                        'analysis_name': self.analysis_name,
                         'cleanup_ids':self.cleanups,
                         'result':op_handler.run(corpora),
                         'analysis':self.operation}
-        print(analysis)
         analysis_id = DatabaseAdapter.getDB().analyses.insert(analysis)
         response = {'transaction_id': self.transaction_id,
                     'cleanup_ids': self.cleanups,
                     'library':self.library,
                     'operation':self.operation,
+                    'analysis_name': self.analysis_name,
                     'results':str(analysis_id)}
         print(response)
         return json.JSONEncoder().encode(response)
