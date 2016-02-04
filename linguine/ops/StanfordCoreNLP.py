@@ -39,10 +39,9 @@ class StanfordCoreNLP:
     def __init__(self, analysisType):
         self.analysisType = analysisType
 
-        coreNLPPath = os.path.join(os.path.dirname(__file__), '../../lib/stanfordCoreNLP.jar')
-        coreNLPModelsPath = os.path.join(os.path.dirname(__file__), '../../lib/stanfordCoreNLPModels.jar')
         if StanfordCoreNLP.proc == None:
-            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner'}, corenlp_jars=[coreNLPPath, coreNLPModelsPath])
+            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner'}, 
+            corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')])
 
     def run(self, data):
         return self.jsonCleanup(data, self.analysisType) 
