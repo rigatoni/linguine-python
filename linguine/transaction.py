@@ -27,7 +27,6 @@ class Transaction:
         try:
             input_data = json.loads(json_data.decode())
 
-            print(input_data)
             self.transaction_id = input_data['transaction_id']
             self.operation = input_data['operation']
             self.library = input_data['library']
@@ -48,7 +47,6 @@ class Transaction:
             corpora = DatabaseAdapter.getDB().corpus
             for id in self.corpora_ids:
                 corpus = corpora.find_one({"_id" : ObjectId(id)})
-                print(corpus)
                 self.corpora.append(Corpus(id, corpus["title"], corpus["contents"], corpus["tags"]))
         except (TypeError, InvalidId):
             raise TransactionException('Could not find corpus.')
@@ -90,5 +88,4 @@ class Transaction:
                     'operation':self.operation,
                     'analysis_name': self.analysis_name,
                     'results':str(analysis_id)}
-        print(response)
         return json.JSONEncoder().encode(response)

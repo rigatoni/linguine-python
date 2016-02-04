@@ -17,7 +17,6 @@ try:
 except ImportError:
     sys.stderr.write("Tornado not found.")
 
-
 class MainHandler(tornado.web.RequestHandler):
     def post(self):
         self.set_header('Content-Type', 'application/json')
