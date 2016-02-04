@@ -22,13 +22,13 @@ class StanfordCoreNLP:
     def jsonCleanup(self, data, analysisTypes):
       for corpus in data:
           res = StanfordCoreNLP.proc.parse_doc(corpus.contents)
+          print(str(res));
           for sentence in res["sentences"]:
             words = [] 
             for index, token in enumerate(sentence["tokens"]):
               word = {}
               
               word["token"] = sentence["tokens"][index]
-              word["lemma"] = sentence["lemmas"][index]
               for atype in analysisTypes:
                 word[atype] = sentence[atype][index]
 
@@ -42,7 +42,7 @@ class StanfordCoreNLP:
         coreNLPPath = os.path.join(os.path.dirname(__file__), '../../lib/stanfordCoreNLP.jar')
         coreNLPModelsPath = os.path.join(os.path.dirname(__file__), '../../lib/stanfordCoreNLPModels.jar')
         if StanfordCoreNLP.proc == None:
-            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, dcoref'}, corenlp_jars=[coreNLPPath, coreNLPModelsPath])
+            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner'}, corenlp_jars=[coreNLPPath, coreNLPModelsPath])
 
     def run(self, data):
         return self.jsonCleanup(data, self.analysisType) 
