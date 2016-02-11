@@ -29,7 +29,11 @@ class StanfordCoreNLP:
               
               word["token"] = sentence["tokens"][index]
               for atype in analysisTypes:
-                word[atype] = sentence[atype][index]
+                if atype is "sentiment":
+                    word[atype] = sentence[atype]
+                    word["sentimentValue"] = sentence["sentimentValue"]
+                else:
+                    word[atype] = sentence[atype][index]
 
               words.append(word)
 
@@ -39,9 +43,9 @@ class StanfordCoreNLP:
         self.analysisType = analysisType
 
         if StanfordCoreNLP.proc == None:
-            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner'}, 
+            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment'},
             corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')])
 
     def run(self, data):
-        return self.jsonCleanup(data, self.analysisType) 
+        return self.jsonCleanup(data, self.analysisType)
 
