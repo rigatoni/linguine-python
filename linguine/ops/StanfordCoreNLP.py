@@ -22,9 +22,8 @@ class StanfordCoreNLP:
     def jsonCleanup(self, data, analysisTypes):
       for corpus in data:
           res = StanfordCoreNLP.proc.parse_doc(corpus.contents)
-          print(str(res));
+          words = [] 
           for sentence in res["sentences"]:
-            words = [] 
             for index, token in enumerate(sentence["tokens"]):
               word = {}
               
