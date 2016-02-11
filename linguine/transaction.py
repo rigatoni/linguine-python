@@ -20,7 +20,6 @@ class Transaction:
         self.cleanups = []
         self.tokenizer = None
 
-        #TOKENIZER LIST: If a new operation requires a user-selected tokenizer, add it here
         self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
 
     def parse_json(self, json_data):
@@ -56,15 +55,22 @@ class Transaction:
         tokenized_corpora = []
         analysis = {}
         
-        for cleanup in self.cleanups:
-            op_handler = linguine.operation_builder.get_operation_handler(cleanup)
-            corpora = op_handler.run(corpora)
-        
         if not self.tokenizer == None and not self.tokenizer == '':
             op_handler = linguine.operation_builder \
             .get_operation_handler(self.tokenizer)
-
             tokenized_corpora = op_handler.run(corpora)
+        
+        for cleanup in self.cleanups:
+
+            op_handler = linguine.operation_builder.\
+            get_operation_handler(cleanup)
+            corpora = op_handler.run(corpora)
+            
+            #Corpora must be re tokenized after each cleanup
+            if not self.tokenizer == None and not self.tokenizer == '':
+              op_handler = linguine.operation_builder \
+              .get_operation_handler(self.tokenizer)
+              tokenized_corpora = op_handler.run(corpora)
 
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
 
