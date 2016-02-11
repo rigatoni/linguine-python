@@ -56,18 +56,19 @@ class Transaction:
         tokenized_corpora = []
         analysis = {}
         
-        if not self.tokenizer == None and not self.tokenizer == '':
-            op_handler = linguine.operation_builder.get_operation_handler(self.tokenizer)
-            tokenized_corpora = op_handler.run(corpora)
         for cleanup in self.cleanups:
             op_handler = linguine.operation_builder.get_operation_handler(cleanup)
             corpora = op_handler.run(corpora)
+        
+        if not self.tokenizer == None and not self.tokenizer == '':
+            op_handler = linguine.operation_builder \
+            .get_operation_handler(self.tokenizer)
+
+            tokenized_corpora = op_handler.run(corpora)
+
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
 
         if self.operation in self.token_based_operations:
-            if self.tokenizer == None:
-                tokenizer_handler = linguine.operation_builder.get_operation_handler('word_tokenize_spaces')
-                tokenized_corpora = tokenizer_handler.run(corpora)
             analysis = {'user_id':ObjectId(self.user_id),
                         'analysis_name': self.analysis_name,
                         'corpora_ids':self.corpora_ids,
@@ -81,7 +82,9 @@ class Transaction:
                         'cleanup_ids':self.cleanups,
                         'result':op_handler.run(corpora),
                         'analysis':self.operation}
+
         analysis_id = DatabaseAdapter.getDB().analyses.insert(analysis)
+
         response = {'transaction_id': self.transaction_id,
                     'cleanup_ids': self.cleanups,
                     'library':self.library,
