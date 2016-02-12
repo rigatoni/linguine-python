@@ -86,8 +86,7 @@ class Transaction:
         except ValueError:
             raise TransactionException('Could not parse JSON.')
 
-    @gen.coroutine
-    def run(self):
+    def run(self, analysis_id):
         corpora = self.corpora
         tokenized_corpora = []
         analysis = {}
@@ -109,6 +108,8 @@ class Transaction:
               .get_operation_handler(self.tokenizer)
               tokenized_corpora = op_handler.run(corpora)
 
-        op_handler = linguine.operation_builder.get_operation_handler(self.operation)
-        return op_handler.run(corpora)
+        op_handler = linguine.operation_builder.\
+                get_operation_handler(self.operation)
+
+        self.write_result(op_handler.run(corpora), analysis_id)
 

@@ -6,8 +6,8 @@ import json
 
 from sys import stderr
 from linguine.transaction import Transaction
+from concurrent.futures import ThreadPoolExecutor
 from linguine.transaction_exception import TransactionException
-from tornado import gen
 
 """
 Check to ensure Tornado is installed
@@ -19,7 +19,9 @@ except ImportError:
     sys.stderr.write("Tornado not found.")
 
 class MainHandler(tornado.web.RequestHandler):
-    @gen.coroutine
+
+    analysis_executor = ThreadPoolExecutor(max_workers=5)
+
     def post(self):
         self.set_header('Content-Type', 'application/json')
         try:
@@ -33,10 +35,7 @@ class MainHandler(tornado.web.RequestHandler):
             self.finish()
 
             #Encapsulate running of analysis in a future
-            result = yield transaction.run()
-
-            transaction.write_result(result, analysis_id)
-            
+            self.analysis_executor.submit(transaction.run, analysis_id)
 
         except TransactionException as err:
             self.set_status(err.code)
