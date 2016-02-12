@@ -15,13 +15,41 @@ class Transaction:
         self.operation = None
         self.user_id = None
         self.corpora_ids = []
+        self.time_created = None
         self.corpora = []
         self.analysis_name = ""
         self.cleanups = []
         self.tokenizer = None
 
         self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
+    
+    #Read in all corpora that are specified for a given transaction
+    def read_corpora(self, corpora_ids):
+        try:
+            #load corpora from database
+            corpora = DatabaseAdapter.getDB().corpus
+            for id in self.corpora_ids:
+                corpus = corpora.find_one({"_id" : ObjectId(id)})
+                self.corpora.append(Corpus(id, corpus["title"], corpus["contents"], corpus["tags"]))
+        except (TypeError, InvalidId):
+            raise TransactionException('Could not find corpus.')
+    
+    #Insert an analysis record into the database,
+    # acknowledging that an analysis is to be processed.
+    def create_analysis_record(self):
+        analysis = {'user_id':ObjectId(self.user_id),
+                    'analysis_name': self.analysis_name,
+                    'corpora_ids':self.corpora_ids,
+                    'cleanup_ids':self.cleanups,
+                    'result': "",
+                    'complete': False,
+                    'time_created': self.time_created,
+                    'analysis':self.operation}
 
+        return DatabaseAdapter.getDB().analyses.insert(analysis)
+    
+    #Parse a JSON request from the linguine-node webserver,
+    #Requesting that an analysis should be preformed
     def parse_json(self, json_data):
         try:
             input_data = json.loads(json_data.decode())
@@ -30,6 +58,7 @@ class Transaction:
             self.operation = input_data['operation']
             self.library = input_data['library']
             self.analysis_name = input_data['analysis_name']
+            self.time_created = input_data['time_created']
             if 'user_id' in input_data.keys():
                 self.user_id = input_data['user_id']
             if 'cleanup' in input_data.keys():
@@ -41,14 +70,6 @@ class Transaction:
             raise TransactionException('Missing property transaction_id, operation, library, tokenizer or corpora_ids.')
         except ValueError:
             raise TransactionException('Could not parse JSON.')
-        try:
-            #load corpora from database
-            corpora = DatabaseAdapter.getDB().corpus
-            for id in self.corpora_ids:
-                corpus = corpora.find_one({"_id" : ObjectId(id)})
-                self.corpora.append(Corpus(id, corpus["title"], corpus["contents"], corpus["tags"]))
-        except (TypeError, InvalidId):
-            raise TransactionException('Could not find corpus.')
 
     def run(self):
         corpora = self.corpora
@@ -73,28 +94,5 @@ class Transaction:
               tokenized_corpora = op_handler.run(corpora)
 
         op_handler = linguine.operation_builder.get_operation_handler(self.operation)
+        return op_handler.run(corpora)
 
-        if self.operation in self.token_based_operations:
-            analysis = {'user_id':ObjectId(self.user_id),
-                        'analysis_name': self.analysis_name,
-                        'corpora_ids':self.corpora_ids,
-                        'cleanup_ids':self.cleanups,
-                        'result':op_handler.run(tokenized_corpora),
-                        'analysis':self.operation}
-        else:
-            analysis = {'user_id':ObjectId(self.user_id),
-                        'corpora_ids':self.corpora_ids,
-                        'analysis_name': self.analysis_name,
-                        'cleanup_ids':self.cleanups,
-                        'result':op_handler.run(corpora),
-                        'analysis':self.operation}
-
-        analysis_id = DatabaseAdapter.getDB().analyses.insert(analysis)
-
-        response = {'transaction_id': self.transaction_id,
-                    'cleanup_ids': self.cleanups,
-                    'library':self.library,
-                    'operation':self.operation,
-                    'analysis_name': self.analysis_name,
-                    'results':str(analysis_id)}
-        return json.JSONEncoder().encode(response)

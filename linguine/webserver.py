@@ -22,8 +22,12 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'application/json')
         try:
             transaction = Transaction()
-            transaction.parse_json(self.request.body)
-            self.write(transaction.run())
+            requestObj = transaction.parse_json(self.request.body)
+            transaction.read_corpora(transaction.corpora_ids)
+            analysis_id = transaction.create_analysis_record()
+            self.write(json.JSONEncoder()\
+                    .encode({'analysis_id': str(analysis_id)}));
+
         except TransactionException as err:
             self.set_status(err.code)
             self.write(json.JSONEncoder().encode({'error': err.error}))
