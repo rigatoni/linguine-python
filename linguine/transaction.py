@@ -1,6 +1,8 @@
 import json
 import linguine.operation_builder
+from multiprocessing import Pool
 from linguine.corpus import Corpus
+from tornado import gen
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
@@ -17,8 +19,10 @@ class Transaction:
         self.corpora_ids = []
         self.time_created = None
         self.corpora = []
+        self.analysis_pool = Pool(processes=5)
         self.analysis_name = ""
         self.cleanups = []
+        self.current_result = None
         self.tokenizer = None
 
         self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
@@ -45,8 +49,19 @@ class Transaction:
                     'complete': False,
                     'time_created': self.time_created,
                     'analysis':self.operation}
-
+        
         return DatabaseAdapter.getDB().analyses.insert(analysis)
+
+    #Write result object to DB
+    def write_result(self, result, analysis_id):
+        analysis  = DatabaseAdapter.getDB().analyses.\
+                find_one({"_id" : ObjectId(analysis_id)})
+
+        analysis['complete'] = True
+        analysis['result'] = result
+
+        DatabaseAdapter.getDB().analyses.update({'_id': ObjectId(analysis_id)} ,\
+                analysis);
     
     #Parse a JSON request from the linguine-node webserver,
     #Requesting that an analysis should be preformed
@@ -71,6 +86,7 @@ class Transaction:
         except ValueError:
             raise TransactionException('Could not parse JSON.')
 
+    @gen.coroutine
     def run(self):
         corpora = self.corpora
         tokenized_corpora = []
