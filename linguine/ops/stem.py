@@ -5,33 +5,18 @@ Given: A list of strings representing a tokenized collection of words.
 There are three stemming algorithms available: The Porter stemmer,
 the Lancaster stemmer, and the Snowball stemmer.
 """
-from nltk.stem.snowball import EnglishStemmer
-from nltk.stem.lancaster import LancasterStemmer
 from nltk.stem.porter import PorterStemmer
-class StemmerSnowball:
-    def __init__(self):
-        pass
-    def run(self, data):
-        english = EnglishStemmer()
-        for corpus in data:
-            corpus.tokenized_contents = [english.stem(word) for word in corpus.tokenized_contents]
-            corpus.contents = ''.join(corpus.tokenized_contents)
-        return data
-class StemmerLancaster:
-    def __init__(self):
-        pass
-    def run(self, data):
-        lancaster = LancasterStemmer()
-        for corpus in data:
-            corpus.tokenized_contents = [lancaster.stem(word) for word in corpus.tokenized_contents]
-            corpus.contents = ''.join(corpus.tokenized_contents)
-        return data
 class StemmerPorter:
     def __init__(self):
         pass
     def run(self, data):
         porter = PorterStemmer()
         for corpus in data:
+            corpusString = ""
             corpus.tokenized_contents = [porter.stem(word) for word in corpus.tokenized_contents]
-            corpus.contents = ''.join(corpus.tokenized_contents)
+            for index, word in enumerate(corpus.tokenized_contents):
+                corpusString += corpus.tokenized_contents[index] + " "
+            
+            corpus.contents = corpusString
+
         return data
