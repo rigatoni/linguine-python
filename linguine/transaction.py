@@ -19,7 +19,7 @@ class Transaction:
         self.analysis_name = ""
         self.cleanups = []
         self.tokenizer = None
-
+        self.timestamp = ""
         self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
 
     def parse_json(self, json_data):
@@ -30,6 +30,7 @@ class Transaction:
             self.operation = input_data['operation']
             self.library = input_data['library']
             self.analysis_name = input_data['analysis_name']
+            self.timestamp = input_data['timestamp']
             if 'user_id' in input_data.keys():
                 self.user_id = input_data['user_id']
             if 'cleanup' in input_data.keys():
@@ -79,22 +80,28 @@ class Transaction:
                         'analysis_name': self.analysis_name,
                         'corpora_ids':self.corpora_ids,
                         'cleanup_ids':self.cleanups,
+                        'tokenizer': self.tokenizer,
                         'result':op_handler.run(tokenized_corpora),
+                        'timestamp': self.timestamp,
                         'analysis':self.operation}
         else:
             analysis = {'user_id':ObjectId(self.user_id),
                         'corpora_ids':self.corpora_ids,
                         'analysis_name': self.analysis_name,
                         'cleanup_ids':self.cleanups,
+                        'tokenizer': self.tokenizer,
                         'result':op_handler.run(corpora),
+                        'timestamp': self.timestamp,
                         'analysis':self.operation}
 
         analysis_id = DatabaseAdapter.getDB().analyses.insert(analysis)
 
         response = {'transaction_id': self.transaction_id,
                     'cleanup_ids': self.cleanups,
+                    'tokenizer': self.tokenizer,
                     'library':self.library,
                     'operation':self.operation,
                     'analysis_name': self.analysis_name,
+                    'timestamp': self.timestamp,
                     'results':str(analysis_id)}
         return json.JSONEncoder().encode(response)
