@@ -27,6 +27,7 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'application/json')
         try:
             self.numTransactionsRunning+=1
+            
             transaction = Transaction()
             requestObj = transaction.parse_json(self.request.body)
             transaction.read_corpora(transaction.corpora_ids)
@@ -41,10 +42,15 @@ class MainHandler(tornado.web.RequestHandler):
             self.analysis_executor.submit(transaction.run, analysis_id, self)
 
         except TransactionException as err:
+
+            print("===========error==================")
+            print(json.JSONEncoder().encode({'error': err.error})) 
+            print("===========end_error==================")
             self.set_status(err.code)
             self.write(json.JSONEncoder().encode({'error': err.error}))
 
 if __name__ == "__main__":
+
     try:
         application = tornado.web.Application([(r"/", MainHandler)])
         application.listen(5555)

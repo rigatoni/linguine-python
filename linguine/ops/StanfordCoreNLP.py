@@ -22,26 +22,40 @@ class StanfordCoreNLP:
     def jsonCleanup(self, data, analysisTypes):
       for corpus in data:
           res = StanfordCoreNLP.proc.parse_doc(corpus.contents)
-          words = [] 
-          for sentence in res["sentences"]:
-            for index, token in enumerate(sentence["tokens"]):
+
+          sentences = []
+          for sentence_res in res["sentences"]:
+            words = []
+            for index, token in enumerate(sentence_res["tokens"]):
               word = {}
               
-              word["token"] = sentence["tokens"][index]
+              word["token"] = sentence_res["tokens"][index]
               for atype in analysisTypes:
-                word[atype] = sentence[atype][index]
+                if atype is "sentiment":
+                    word[atype] = sentence_res[atype]
+                    word["sentimentValue"] = sentence_res["sentimentValue"]
+                elif atype is not "parse":
+                    word[atype] = sentence_res[atype][index]
 
               words.append(word)
+            sentence = {}
+            sentence['tokens'] = words
+            if "sentiment" in analysisTypes:
+              sentence['sentiment'] = sentence_res['sentiment']
+              sentence['sentimentValue'] = sentence_res['sentimentValue']
+            if "parse" in analysisTypes:
+                sentence["parse"] = sentence_res["parse"]
+            sentences.append(sentence)
 
-      return words
+      return sentences
 
     def __init__(self, analysisType):
         self.analysisType = analysisType
 
         if StanfordCoreNLP.proc == None:
-            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner'}, 
+            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment'},
             corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')])
 
     def run(self, data):
-        return self.jsonCleanup(data, self.analysisType) 
+        return self.jsonCleanup(data, self.analysisType)
 
