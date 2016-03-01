@@ -1,4 +1,5 @@
 import json
+import time
 import linguine.operation_builder
 from multiprocessing import Pool
 from linguine.corpus import Corpus
@@ -74,6 +75,7 @@ class Transaction:
             self.library = input_data['library']
             self.analysis_name = input_data['analysis_name']
             self.time_created = input_data['time_created']
+
             if 'user_id' in input_data.keys():
                 self.user_id = input_data['user_id']
             if 'cleanup' in input_data.keys():
@@ -87,6 +89,7 @@ class Transaction:
             raise TransactionException('Could not parse JSON.')
 
     def run(self, analysis_id):
+        start = time.clock()
         corpora = self.corpora
         tokenized_corpora = []
         analysis = {}
@@ -113,3 +116,5 @@ class Transaction:
 
         self.write_result(op_handler.run(corpora), analysis_id)
 
+        #write transaction time to console 
+        print(self.analysis_name,',', (time.clock() - start) * 1000)

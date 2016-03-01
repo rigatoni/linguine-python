@@ -16,7 +16,6 @@ from linguine.ops.word_tokenize import WordTokenizeTreebank, WordTokenizeWhitesp
 from linguine.ops.StanfordCoreNLP import StanfordCoreNLP
 
 def get_operation_handler(operation):
-    print(operation)
     if operation == 'lemmatize_wordnet':
         return LemmatizerWordNet()
     elif operation == 'pos_tag':
