@@ -14,6 +14,7 @@ class Transaction:
     
     def __init__(self, env=None):
         self.transaction_id = -1
+        self.eta = None
         self.library = None
         self.operation = None
         self.user_id = None
@@ -47,6 +48,7 @@ class Transaction:
                     'corpora_ids':self.corpora_ids,
                     'cleanup_ids':self.cleanups,
                     'result': "",
+                    'eta': self.eta,
                     'complete': False,
                     'time_created': self.time_created,
                     'analysis':self.operation}
@@ -83,12 +85,31 @@ class Transaction:
             self.corpora_ids = input_data['corpora_ids']
             if 'tokenizer' in input_data.keys():
                 self.tokenizer = input_data['tokenizer']
+
         except KeyError:
             raise TransactionException('Missing property transaction_id, operation, library, tokenizer or corpora_ids.')
         except ValueError:
             raise TransactionException('Could not parse JSON.')
+    
+    """
+    Calculate the estimated time that a transaction will require to complete.
+    this will be stored in the database record to display on the client
+    """
+    def calcETA(self, numTransactions):
+      time = 0
+      #For now, assume the transaction queue adds 10secs per transaction
+      time += numTransactions * 10
+    
+      #Check which type of transaction is being preformed
 
-    def run(self, analysis_id):
+      self.eta = time
+    
+    """
+    Execute the given analysis that has been fetched from the thread pool
+    @args: MainHandler - Instance of parent class that keeps track of num of Transactions
+           analysis_id - unique identifier of this Transaction
+    """
+    def run(self, analysis_id, MainHandler):
         start = time.clock()
         corpora = self.corpora
         tokenized_corpora = []
@@ -118,3 +139,6 @@ class Transaction:
 
         #write transaction time to console 
         print(self.analysis_name,',', (time.clock() - start) * 1000)
+       
+        #Subtract one from analysis running count now that we're complete
+        MainHandler.numTransactionsRunning -= 1

@@ -19,15 +19,18 @@ except ImportError:
     sys.stderr.write("Tornado not found.")
 
 class MainHandler(tornado.web.RequestHandler):
-
+    
+    numTransactionsRunning = 0
     analysis_executor = ThreadPoolExecutor(max_workers=5)
 
     def post(self):
         self.set_header('Content-Type', 'application/json')
         try:
+            self.numTransactionsRunning+=1
             transaction = Transaction()
             requestObj = transaction.parse_json(self.request.body)
             transaction.read_corpora(transaction.corpora_ids)
+            transaction.calcETA(self.numTransactionsRunning)
             analysis_id = transaction.create_analysis_record()
 
             #Generate response to server before kicking off analysis
@@ -35,7 +38,7 @@ class MainHandler(tornado.web.RequestHandler):
             self.finish()
 
             #Encapsulate running of analysis in a future
-            self.analysis_executor.submit(transaction.run, analysis_id)
+            self.analysis_executor.submit(transaction.run, analysis_id, self)
 
         except TransactionException as err:
             self.set_status(err.code)
