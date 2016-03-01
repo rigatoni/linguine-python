@@ -19,7 +19,6 @@ except ImportError:
     sys.stderr.write("Tornado not found.")
 
 class MainHandler(tornado.web.RequestHandler):
-    
     numTransactionsRunning = 0
     analysis_executor = ThreadPoolExecutor(max_workers=5)
 
@@ -27,7 +26,6 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'application/json')
         try:
             self.numTransactionsRunning+=1
-            
             transaction = Transaction()
             requestObj = transaction.parse_json(self.request.body)
             transaction.read_corpora(transaction.corpora_ids)
@@ -44,7 +42,7 @@ class MainHandler(tornado.web.RequestHandler):
         except TransactionException as err:
 
             print("===========error==================")
-            print(json.JSONEncoder().encode({'error': err.error})) 
+            print(json.JSONEncoder().encode({'error': err.error}))
             print("===========end_error==================")
             self.set_status(err.code)
             self.write(json.JSONEncoder().encode({'error': err.error}))

@@ -11,7 +11,6 @@ from linguine.database_adapter import DatabaseAdapter
 from linguine.transaction_exception import TransactionException
 
 class Transaction:
-    
     def __init__(self, env=None):
         self.transaction_id = -1
         self.eta = None
@@ -26,9 +25,8 @@ class Transaction:
         self.cleanups = []
         self.current_result = None
         self.tokenizer = None
-
+        self.timestamp = ""
         self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
-    
     #Read in all corpora that are specified for a given transaction
     def read_corpora(self, corpora_ids):
         try:
@@ -39,7 +37,6 @@ class Transaction:
                 self.corpora.append(Corpus(id, corpus["title"], corpus["contents"], corpus["tags"]))
         except (TypeError, InvalidId):
             raise TransactionException('Could not find corpus.')
-    
     #Insert an analysis record into the database,
     # acknowledging that an analysis is to be processed.
     def create_analysis_record(self):
@@ -48,11 +45,11 @@ class Transaction:
                     'corpora_ids':self.corpora_ids,
                     'cleanup_ids':self.cleanups,
                     'result': "",
+                    'tokenizer': self.tokenizer,
                     'eta': self.eta,
                     'complete': False,
                     'time_created': self.time_created,
                     'analysis':self.operation}
-        
         return DatabaseAdapter.getDB().analyses.insert(analysis)
 
     #Write result object to DB
@@ -65,7 +62,6 @@ class Transaction:
 
         DatabaseAdapter.getDB().analyses.update({'_id': ObjectId(analysis_id)} ,\
                 analysis);
-    
     #Parse a JSON request from the linguine-node webserver,
     #Requesting that an analysis should be preformed
     def parse_json(self, json_data):
@@ -90,7 +86,6 @@ class Transaction:
             raise TransactionException('Missing property transaction_id, operation, library, tokenizer or corpora_ids.')
         except ValueError:
             raise TransactionException('Could not parse JSON.')
-    
     """
     Calculate the estimated time that a transaction will require to complete.
     this will be stored in the database record to display on the client
@@ -99,14 +94,12 @@ class Transaction:
       time = 0
       #For now, assume the transaction queue adds 10secs per transaction
       time += numTransactions * 10
-    
       #Check which type of transaction is being preformed
       if "nlp" in self.operation:
           #A raw guess that a CoreNLP analysis will take 30sec
           time += 30
 
       self.eta = time
-    
     """
     Execute the given analysis that has been fetched from the thread pool
     @args: MainHandler - Instance of parent class that keeps track of num of Transactions
@@ -117,18 +110,15 @@ class Transaction:
         corpora = self.corpora
         tokenized_corpora = []
         analysis = {}
-        
         if not self.tokenizer == None and not self.tokenizer == '':
             op_handler = linguine.operation_builder \
             .get_operation_handler(self.tokenizer)
             tokenized_corpora = op_handler.run(corpora)
-        
         for cleanup in self.cleanups:
 
             op_handler = linguine.operation_builder.\
             get_operation_handler(cleanup)
             corpora = op_handler.run(corpora)
-            
             #Corpora must be re tokenized after each cleanup
             if not self.tokenizer == None and not self.tokenizer == '':
               op_handler = linguine.operation_builder \
@@ -142,6 +132,5 @@ class Transaction:
 
         #write transaction time to console 
         print(self.analysis_name,',', (time.clock() - start) * 1000)
-       
         #Subtract one from analysis running count now that we're complete
         MainHandler.numTransactionsRunning -= 1
