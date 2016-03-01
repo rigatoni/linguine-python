@@ -101,6 +101,9 @@ class Transaction:
       time += numTransactions * 10
     
       #Check which type of transaction is being preformed
+      if "nlp" in self.operation:
+          #A raw guess that a CoreNLP analysis will take 30sec
+          time += 30
 
       self.eta = time
     
