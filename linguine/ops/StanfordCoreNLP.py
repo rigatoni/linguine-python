@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import json
 
 """
 Performs some core NLP operations as a proof of concept for the library.
@@ -22,7 +23,6 @@ class StanfordCoreNLP:
     def jsonCleanup(self, data, analysisTypes):
       for corpus in data:
           res = StanfordCoreNLP.proc.parse_doc(corpus.contents)
-
           sentences = []
           for sentence_res in res["sentences"]:
             words = []
@@ -43,6 +43,7 @@ class StanfordCoreNLP:
             if "sentiment" in analysisTypes:
               sentence['sentiment'] = sentence_res['sentiment']
               sentence['sentimentValue'] = sentence_res['sentimentValue']
+              sentence['sentiment_json'] = json.loads(sentence_res['sentiment_json'])
             if "parse" in analysisTypes:
                 sentence["parse"] = sentence_res["parse"]
             sentences.append(sentence)
