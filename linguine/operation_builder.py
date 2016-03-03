@@ -12,7 +12,9 @@ from linguine.ops.remove_stopwords import RemoveStopwords
 from linguine.ops.sentence_tokenize import SentenceTokenize
 from linguine.ops.stem import StemmerPorter
 from linguine.ops.topic_model import TopicModel
-from linguine.ops.word_tokenize import WordTokenizeTreebank, WordTokenizeWhitespacePunct, WordTokenizeStanford, WordTokenizeSpaces, WordTokenizeTabs
+from linguine.ops.word_tokenize import WordTokenizeTreebank, \
+        WordTokenizeWhitespacePunct, WordTokenizeStanford, \
+        WordTokenizeSpaces, WordTokenizeTabs
 from linguine.ops.StanfordCoreNLP import StanfordCoreNLP
 
 def get_operation_handler(operation):

@@ -25,7 +25,6 @@ class Transaction:
         self.cleanups = []
         self.current_result = None
         self.tokenizer = None
-        self.timestamp = ""
         self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
     #Read in all corpora that are specified for a given transaction
     def read_corpora(self, corpora_ids):
