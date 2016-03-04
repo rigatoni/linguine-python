@@ -11,13 +11,12 @@ from stanford_corenlp_pywrapper import CoreNLP
 class StanfordCoreNLP:
 
     proc = None
-    
     """
     When the JSON segments return from the CoreNLP library, they
     separate the data acquired from each word into their own element.
 
     For readability's sake, it would be nice to pair all of the information
-    for a given word with that word, making a list of words with their 
+    for a given word with that word, making a list of words with their
     part of speech tags
     """
     def jsonCleanup(self, data, analysisTypes):
@@ -28,7 +27,6 @@ class StanfordCoreNLP:
             words = []
             for index, token in enumerate(sentence_res["tokens"]):
               word = {}
-              
               word["token"] = sentence_res["tokens"][index]
               for atype in analysisTypes:
                 if atype is "sentiment":
@@ -44,8 +42,11 @@ class StanfordCoreNLP:
               sentence['sentiment'] = sentence_res['sentiment']
               sentence['sentimentValue'] = sentence_res['sentimentValue']
               sentence['sentiment_json'] = json.loads(sentence_res['sentiment_json'])
+
             if "parse" in analysisTypes:
                 sentence["parse"] = sentence_res["parse"]
+
+            sentence['deps_json'] = json.loads(sentence_res['deps_json'])
             sentences.append(sentence)
 
       return sentences
