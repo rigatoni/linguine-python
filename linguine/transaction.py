@@ -25,7 +25,9 @@ class Transaction:
         self.cleanups = []
         self.current_result = None
         self.tokenizer = None
-        self.token_based_operations = ['tfidf','word_cloud_op','stem_porter','stem_lancaster','stem_snowball','lemmatize_wordnet']
+        self.token_based_operations = ['tfidf','word_cloud_op',
+                'stem_porter','stem_lancaster',
+                'stem_snowball','lemmatize_wordnet']
     #Read in all corpora that are specified for a given transaction
     def read_corpora(self, corpora_ids):
         try:
@@ -33,7 +35,8 @@ class Transaction:
             corpora = DatabaseAdapter.getDB().corpus
             for id in self.corpora_ids:
                 corpus = corpora.find_one({"_id" : ObjectId(id)})
-                self.corpora.append(Corpus(id, corpus["title"], corpus["contents"], corpus["tags"]))
+                self.corpora.append(Corpus(id, corpus["title"],
+                    corpus["contents"], corpus["tags"]))
         except (TypeError, InvalidId):
             raise TransactionException('Could not find corpus.')
     #Insert an analysis record into the database,
@@ -59,7 +62,7 @@ class Transaction:
         analysis['complete'] = True
         analysis['result'] = result
 
-        DatabaseAdapter.getDB().analyses.update({'_id': ObjectId(analysis_id)} ,\
+        DatabaseAdapter.getDB().analyses.update({'_id': ObjectId(analysis_id)} ,
                 analysis);
     #Parse a JSON request from the linguine-node webserver,
     #Requesting that an analysis should be preformed
@@ -82,7 +85,8 @@ class Transaction:
                 self.tokenizer = input_data['tokenizer']
 
         except KeyError:
-            raise TransactionException('Missing property transaction_id, operation, library, tokenizer or corpora_ids.')
+            raise TransactionException('Missing property transaction_id, \
+                    operation, library, tokenizer or corpora_ids.')
         except ValueError:
             raise TransactionException('Could not parse JSON.')
     """
@@ -91,17 +95,20 @@ class Transaction:
     """
     def calcETA(self, numTransactions):
       time = 0
-      #For now, assume the transaction queue adds 10secs per transaction
-      time += numTransactions * 10
+      #For now, assume the transaction queue adds 30secs per transaction
+      time += numTransactions * 30
       #Check which type of transaction is being preformed
       if "nlp" in self.operation:
-          #A raw guess that a CoreNLP analysis will take 30sec
-          time += 30
+          #A raw guess that a CoreNLP analysis will take 1 second per
+          #10 words processed. 
+          time += (len(self.corpora[0].contents.split(" ")) / 10)
 
       self.eta = time
+
     """
     Execute the given analysis that has been fetched from the thread pool
-    @args: MainHandler - Instance of parent class that keeps track of num of Transactions
+    @args: MainHandler - Instance of parent class that keeps track of
+    num of Transactions
            analysis_id - unique identifier of this Transaction
     """
     def run(self, analysis_id, MainHandler):
