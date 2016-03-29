@@ -3,6 +3,7 @@
 The Tornado server used to receive operation requests and deliver results to the user.
 """
 import json
+import os
 
 from sys import stderr
 from linguine.transaction import Transaction
@@ -20,7 +21,12 @@ except ImportError:
 
 class MainHandler(tornado.web.RequestHandler):
     numTransactionsRunning = 0
-    analysis_executor = ThreadPoolExecutor(max_workers=5)
+    try:
+        maxThreadPoolWorkers = os.environ['LINGUINE_THREADS']
+    except KeyError as err:
+        maxThreadPoolWorkers = 5
+
+    analysis_executor = ThreadPoolExecutor(max_workers=maxThreadPoolWorkers)
 
     def post(self):
         self.set_header('Content-Type', 'application/json')
