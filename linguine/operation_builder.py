@@ -38,6 +38,8 @@ def get_operation_handler(operation):
         return StemmerLancaster()
     elif operation == 'stem_snowball':
         return StemmerSnowball()
+    elif operation == 'stop_words':
+        return RemoveStopwords()
     elif operation == 'tfidf':
         return Tfidf()
     elif operation == 'topic_model':
