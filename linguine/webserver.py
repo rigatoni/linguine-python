@@ -22,7 +22,7 @@ except ImportError:
 class MainHandler(tornado.web.RequestHandler):
     numTransactionsRunning = 0
     try:
-        maxThreadPoolWorkers = os.environ['LINGUINE_THREADS']
+        maxThreadPoolWorkers = int(os.environ['LINGUINE_THREADS'])
     except KeyError as err:
         maxThreadPoolWorkers = 5
 
