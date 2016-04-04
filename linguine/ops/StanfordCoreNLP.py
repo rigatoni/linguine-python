@@ -48,14 +48,14 @@ class StanfordCoreNLP:
 
             sentence['deps_json'] = json.loads(sentence_res['deps_json'])
             sentences.append(sentence)
-
-      return sentences
+            
+      return {"sentences": sentences, "entities": res["entities"]}
 
     def __init__(self, analysisType):
         self.analysisType = analysisType
 
         if StanfordCoreNLP.proc == None:
-            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment'},
+            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment, dcoref'},
             corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')])
 
     def run(self, data):
