@@ -34,10 +34,6 @@ def get_operation_handler(operation):
         return SentenceTokenize()
     elif operation == 'stem_porter':
         return StemmerPorter()
-    elif operation == 'stem_lancaster':
-        return StemmerLancaster()
-    elif operation == 'stem_snowball':
-        return StemmerSnowball()
     elif operation == 'stop_words':
         return RemoveStopwords()
     elif operation == 'tfidf':
@@ -64,6 +60,8 @@ def get_operation_handler(operation):
         return StanfordCoreNLP(['parse', 'sentiment'])
     elif operation == 'nlp-parse':
         return StanfordCoreNLP(['parse'])
+    elif operation == 'nlp-coref':
+        return StanfordCoreNLP(['coref'])
     elif operation == 'noop':
         return NoOp()
     else:

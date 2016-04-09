@@ -28,12 +28,13 @@ class StanfordCoreNLP:
             for index, token in enumerate(sentence_res["tokens"]):
               word = {}
               word["token"] = sentence_res["tokens"][index]
-              for atype in analysisTypes:
-                if atype is "sentiment":
-                    word[atype] = sentence_res[atype]
-                    word["sentimentValue"] = sentence_res["sentimentValue"]
-                elif atype is not "parse":
-                    word[atype] = sentence_res[atype][index]
+              if not 'coref' in analysisTypes:
+                for atype in analysisTypes:
+                  if atype is "sentiment":
+                      word[atype] = sentence_res[atype]
+                      word["sentimentValue"] = sentence_res["sentimentValue"]
+                  elif atype is not "parse":
+                      word[atype] = sentence_res[atype][index]
 
               words.append(word)
             sentence = {}
@@ -48,7 +49,7 @@ class StanfordCoreNLP:
 
             sentence['deps_json'] = json.loads(sentence_res['deps_json'])
             sentences.append(sentence)
-            
+
       return {"sentences": sentences, "entities": res["entities"]}
 
     def __init__(self, analysisType):
