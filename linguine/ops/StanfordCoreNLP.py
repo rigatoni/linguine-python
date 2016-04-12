@@ -28,12 +28,13 @@ class StanfordCoreNLP:
             for index, token in enumerate(sentence_res["tokens"]):
               word = {}
               word["token"] = sentence_res["tokens"][index]
-              for atype in analysisTypes:
-                if atype is "sentiment":
-                    word[atype] = sentence_res[atype]
-                    word["sentimentValue"] = sentence_res["sentimentValue"]
-                elif atype is not "parse" and atype is not "relation":
-                    word[atype] = sentence_res[atype][index]
+              if not 'coref' in analysisTypes:
+                for atype in analysisTypes:
+                  if atype is "sentiment":
+                      word[atype] = sentence_res[atype]
+                      word["sentimentValue"] = sentence_res["sentimentValue"]
+                  elif atype is not "parse" and atype is not "relation":
+                      word[atype] = sentence_res[atype][index]
 
               words.append(word)
             sentence = {}
@@ -52,13 +53,13 @@ class StanfordCoreNLP:
             sentence['deps_json'] = json.loads(sentence_res['deps_json'])
             sentences.append(sentence)
 
-      return sentences
+      return {"sentences": sentences, "entities": res["entities"]}
 
     def __init__(self, analysisType):
         self.analysisType = analysisType
 
         if StanfordCoreNLP.proc == None:
-            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment, relation, natlog, openie'},
+            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment, dcoref, relation, natlog, openie'},
             corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')])
 
     def run(self, data):
