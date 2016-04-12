@@ -33,7 +33,7 @@ class StanfordCoreNLP:
                   if atype is "sentiment":
                       word[atype] = sentence_res[atype]
                       word["sentimentValue"] = sentence_res["sentimentValue"]
-                  elif atype is not "parse":
+                  elif atype is not "parse" and atype is not "relation":
                       word[atype] = sentence_res[atype][index]
 
               words.append(word)
@@ -47,6 +47,9 @@ class StanfordCoreNLP:
             if "parse" in analysisTypes:
                 sentence["parse"] = sentence_res["parse"]
 
+            if "relation" in analysisTypes:
+                sentence['relations'] = json.loads(sentence_res['relations'])
+
             sentence['deps_json'] = json.loads(sentence_res['deps_json'])
             sentences.append(sentence)
 
@@ -56,7 +59,7 @@ class StanfordCoreNLP:
         self.analysisType = analysisType
 
         if StanfordCoreNLP.proc == None:
-            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment, dcoref'},
+            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment, dcoref, relation, natlog, openie'},
             corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')])
 
     def run(self, data):
