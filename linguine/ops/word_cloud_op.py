@@ -19,7 +19,8 @@ class WordCloudOp:
             #sort results by term frequency
             results.sort(key=lambda results: results['frequency'], reverse=True)
             
-            return results
+            return {"entities": [], "sentences": results}
+        
         except LookupError:
             raise TransactionException('NLTK \'Punkt\' Model not installed.', 500)
         except TypeError:
