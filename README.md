@@ -46,13 +46,15 @@ class FooOp:
 - `HTTP POST '/':` It expects a JSON payload in the provided format.
 ```javascript
 {
-  "transaction_id": "transactionId", // An ID associated with the current request.
-  "operation": "tfidf", // The analytic operation to be performed.
-  "library": "nltk", // The library to use when executing the analysis.
-  "corpora_ids": ["id1", "id2", "etc"] // The corpora ID's to run the analysis on.
-  "user_id": "user1", // The user who requested the analysis.
-  "cleanup": ["removeCapsGreedy","removePunct", "etc"] // The cleanup operations to perform on the text.
-  "tokenizer": "whitespaceTokenizer" // The tokenizer to use to break text into word tokens if needed.
+	"corpora_ids": ["12345"], //Collection of corpora to pipe into analysis
+	"cleanup": ['stopwords'], //Cleanup steps to add
+	"operation": "nlp-relation", //Type of analysis to be preformed
+	"tokenizer": "", //Tokenizer used (if required)
+	"library": "", //Library associated w/ analysis (if required)
+	"transaction_id": "", (Field to be populated by linguine-python)
+	"analysis_name": "Relation Extraction (Stanford CoreNLP)", //Name to display in text fields
+	"time_created": 1461342250445, //Used to calculate ETA of analyses
+	"user_id": "12345" //Unique identifier of user who created analysis
 }
 ```
 ## Currently implemented operations:
