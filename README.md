@@ -57,25 +57,26 @@ class FooOp:
 ```
 ## Currently implemented operations:
 
-* Remove capitalization
-* Remove punctuation
-* Stem words
-* TF-IDF
-* Word Cloud
-* Part of Speech tagging
-* Topic Modeling
+* Term Frequency
+* Part of Speech Tagging
+* Sentiment
+* Named Entity Recognition
+* Relation Extraction
+* Coreference Resolution
 
 ## Dependencies
 
-* Python 3.3 or newer
+* Python 3.4 or newer (Requires implementation of Future object)
 * MongoDB
 * [NLTK Punkt model](http://stackoverflow.com/questions/4867197/failed-loading-english-pickle-with-nltk-data-load)
+* Stanford Corenlp Pywrapper (Installation instructions can be found [here.](https://github.com/Pastafarians/linguine/wiki/Stanford-CoreNLP-Installation) 
 
 ## Development
 
-1. `sudo pip install -r requirements.txt`
-2. `python -m textblob.download_corpora`
-3. `python -m linguine.webserver`
+1. install stanford CoreNLP module following docs [here.](https://github.com/Pastafarians/linguine/wiki/Stanford-CoreNLP-Installation) 
+2. `sudo pip install -r requirements.txt`
+3. `python -m textblob.download_corpora`
+4. `python -m linguine.webserver`
 
 To run tests:
 
