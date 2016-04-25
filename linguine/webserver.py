@@ -24,8 +24,8 @@ class MainHandler(tornado.web.RequestHandler):
     try:
         maxThreadPoolWorkers = int(os.environ['LINGUINE_THREADS'])
     except KeyError as err:
-        maxThreadPoolWorkers = 5
-
+        maxThreadPoolWorkers = 2
+    print("starting thread pool with " + str(maxThreadPoolWorkers) + " threads.")
     analysis_executor = ThreadPoolExecutor(max_workers=maxThreadPoolWorkers)
 
     def post(self):
@@ -43,9 +43,11 @@ class MainHandler(tornado.web.RequestHandler):
             self.finish()
 
             #Encapsulate running of analysis in a future
+            print("Submitting analysis " + str(analysis_id) + " to analysis queue")
             self.analysis_executor.submit(transaction.run, analysis_id, self)
 
-        except TransactionException as err:
+        #Keep this error instance as a catch-all for all web requests
+        except Exception as err:
 
             print("===========error==================")
             print(json.JSONEncoder().encode({'error': err.error}))

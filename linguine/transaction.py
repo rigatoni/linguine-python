@@ -62,6 +62,8 @@ class Transaction:
         analysis['complete'] = True
         analysis['result'] = result
 
+        print("Analysis " + str(analysis_id) + " complete. submitting record to DB")
+
         DatabaseAdapter.getDB().analyses.update({'_id': ObjectId(analysis_id)} ,
                 analysis);
     #Parse a JSON request from the linguine-node webserver,
@@ -112,31 +114,39 @@ class Transaction:
            analysis_id - unique identifier of this Transaction
     """
     def run(self, analysis_id, MainHandler):
-        start = time.clock()
-        corpora = self.corpora
-        tokenized_corpora = []
-        analysis = {}
-        if not self.tokenizer == None and not self.tokenizer == '':
-            op_handler = linguine.operation_builder \
-            .get_operation_handler(self.tokenizer)
-            tokenized_corpora = op_handler.run(corpora)
-        for cleanup in self.cleanups:
+        try:
+            start = time.clock()
+            corpora = self.corpora
+            tokenized_corpora = []
+            analysis = {}
+            if not self.tokenizer == None and not self.tokenizer == '':
+                op_handler = linguine.operation_builder \
+                .get_operation_handler(self.tokenizer)
+                tokenized_corpora = op_handler.run(corpora)
+            for cleanup in self.cleanups:
+
+                op_handler = linguine.operation_builder.\
+                get_operation_handler(cleanup)
+                corpora = op_handler.run(corpora)
+                #Corpora must be re tokenized after each cleanup
+                if not self.tokenizer == None and not self.tokenizer == '':
+                  op_handler = linguine.operation_builder \
+                  .get_operation_handler(self.tokenizer)
+                  tokenized_corpora = op_handler.run(corpora)
 
             op_handler = linguine.operation_builder.\
-            get_operation_handler(cleanup)
-            corpora = op_handler.run(corpora)
-            #Corpora must be re tokenized after each cleanup
-            if not self.tokenizer == None and not self.tokenizer == '':
-              op_handler = linguine.operation_builder \
-              .get_operation_handler(self.tokenizer)
-              tokenized_corpora = op_handler.run(corpora)
+                    get_operation_handler(self.operation)
 
-        op_handler = linguine.operation_builder.\
-                get_operation_handler(self.operation)
+            print("Preforming core operation for analysis " + str(analysis_id) + " with op " +str(op_handler))
+            self.write_result(op_handler.run(corpora), str(analysis_id))
 
-        self.write_result(op_handler.run(corpora), analysis_id)
+            #write transaction time to console 
+            print(self.analysis_name,',', (time.clock() - start) * 1000)
+            #Subtract one from analysis running count now that we're complete
+            MainHandler.numTransactionsRunning -= 1
 
-        #write transaction time to console 
-        print(self.analysis_name,',', (time.clock() - start) * 1000)
-        #Subtract one from analysis running count now that we're complete
-        MainHandler.numTransactionsRunning -= 1
+        except Exception as e:
+            print("===========error==================")
+            print(json.JSONEncoder().encode({'error': err.error}))
+            print("===========end_error==================")
+
