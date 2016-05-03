@@ -46,40 +46,43 @@ class FooOp:
 - `HTTP POST '/':` It expects a JSON payload in the provided format.
 ```javascript
 {
-  "transaction_id": "transactionId", // An ID associated with the current request.
-  "operation": "tfidf", // The analytic operation to be performed.
-  "library": "nltk", // The library to use when executing the analysis.
-  "corpora_ids": ["id1", "id2", "etc"] // The corpora ID's to run the analysis on.
-  "user_id": "user1", // The user who requested the analysis.
-  "cleanup": ["removeCapsGreedy","removePunct", "etc"] // The cleanup operations to perform on the text.
-  "tokenizer": "whitespaceTokenizer" // The tokenizer to use to break text into word tokens if needed.
+	"corpora_ids": ["12345"], //Collection of corpora to pipe into analysis
+	"cleanup": ['stopwords'], //Cleanup steps to add
+	"operation": "nlp-relation", //Type of analysis to be preformed
+	"tokenizer": "", //Tokenizer used (if required)
+	"library": "", //Library associated w/ analysis (if required)
+	"transaction_id": "", (Field to be populated by linguine-python)
+	"analysis_name": "Relation Extraction (Stanford CoreNLP)", //Name to display in text fields
+	"time_created": 1461342250445, //Used to calculate ETA of analyses
+	"user_id": "12345" //Unique identifier of user who created analysis
 }
 ```
 ## Currently implemented operations:
 
-* Remove capitalization
-* Remove punctuation
-* Stem words
-* TF-IDF
-* Word Cloud
-* Part of Speech tagging
-* Topic Modeling
+* Term Frequency
+* Part of Speech Tagging
+* Sentiment
+* Named Entity Recognition
+* Relation Extraction
+* Coreference Resolution
 
 ## Dependencies
 
-* Python 3.3 or newer
+* Python 3.4 or newer (Requires implementation of Future object)
 * MongoDB
 * [NLTK Punkt model](http://stackoverflow.com/questions/4867197/failed-loading-english-pickle-with-nltk-data-load)
+* Stanford Corenlp Pywrapper (Installation instructions can be found [here.](https://github.com/Pastafarians/linguine/wiki/Stanford-CoreNLP-Installation) 
 
 ## Development
 
-1. `pip install -r requirements.txt`
-2. `python -m textblob.download_corpora`
-3. `python -m linguine.webserver`
+1. install stanford CoreNLP module following docs [here.](https://github.com/Pastafarians/linguine/wiki/Stanford-CoreNLP-Installation) 
+2. `sudo pip install -r requirements.txt`
+3. `python -m textblob.download_corpora`
+4. `python -m linguine.webserver`
 
 To run tests:
 
-1. `pip install -r requirements.txt`
-2. `nosetests`
+1. `sudo pip install -r requirements.txt`
+2. `nosetests` #Requires 'nose' to work properly. Check out https://nose.readthedocs.org/en/latest/ if it's not working for you
 
 Note: running the program from a directory other than the linguine-python root directory will cause directory linking errors.

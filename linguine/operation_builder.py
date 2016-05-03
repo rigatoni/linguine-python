@@ -10,9 +10,12 @@ from linguine.ops.remove_caps import RemoveCapsPreserveNNP
 from linguine.ops.remove_punct import RemovePunct
 from linguine.ops.remove_stopwords import RemoveStopwords
 from linguine.ops.sentence_tokenize import SentenceTokenize
-from linguine.ops.stem import StemmerLancaster, StemmerPorter, StemmerSnowball
+from linguine.ops.stem import StemmerPorter
 from linguine.ops.topic_model import TopicModel
-from linguine.ops.word_tokenize import WordTokenizeTreebank, WordTokenizeWhitespacePunct, WordTokenizeStanford, WordTokenizeSpaces, WordTokenizeTabs
+from linguine.ops.word_tokenize import WordTokenizeTreebank, \
+        WordTokenizeWhitespacePunct, WordTokenizeStanford, \
+        WordTokenizeSpaces, WordTokenizeTabs
+from linguine.ops.StanfordCoreNLP import StanfordCoreNLP
 
 def get_operation_handler(operation):
     if operation == 'lemmatize_wordnet':
@@ -31,10 +34,8 @@ def get_operation_handler(operation):
         return SentenceTokenize()
     elif operation == 'stem_porter':
         return StemmerPorter()
-    elif operation == 'stem_lancaster':
-        return StemmerLancaster()
-    elif operation == 'stem_snowball':
-        return StemmerSnowball()
+    elif operation == 'stop_words':
+        return RemoveStopwords()
     elif operation == 'tfidf':
         return Tfidf()
     elif operation == 'topic_model':
@@ -51,6 +52,18 @@ def get_operation_handler(operation):
         return WordTokenizeSpaces()
     elif operation == 'word_tokenize_tabs':
         return WordTokenizeTabs()
+    elif operation == 'nlp-pos':
+        return StanfordCoreNLP(['pos'])
+    elif operation == 'nlp-ner':
+        return StanfordCoreNLP(['pos', 'ner'])
+    elif operation == 'nlp-sentiment':
+        return StanfordCoreNLP(['parse', 'sentiment'])
+    elif operation == 'nlp-parse':
+        return StanfordCoreNLP(['parse'])
+    elif operation == 'nlp-coref':
+        return StanfordCoreNLP(['coref'])
+    elif operation == 'nlp-relation':
+        return StanfordCoreNLP(['parse', 'relation'])
     elif operation == 'noop':
         return NoOp()
     else:
